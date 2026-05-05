@@ -47,6 +47,7 @@ namespace marisamod.Scripts.Cards
         {
             await base.OnPlay(choiceContext, cardPlay);
             ArgumentNullException.ThrowIfNull(cardPlay.Target);
+            Vector2 enemyPos = (Vector2)NCombatRoom.Instance?.GetCreatureNode(cardPlay.Target).VfxSpawnPosition;
             var vfx = VfxSparkProjectile.Create(this, new(1f, 1f, 1f, 1.0f),
                 NCombatRoom.Instance?.GetCreatureNode(cardPlay.Target));
             var damage = !AmplifiedInPlay ? DynamicVars.Damage.BaseValue : DynamicVars["DamageAmplified"].BaseValue;
@@ -65,7 +66,6 @@ namespace marisamod.Scripts.Cards
             if (add > 0)
             {
                 NCreature player = NCombatRoom.Instance?.GetCreatureNode(Owner.Creature);
-                NCreature enemy = NCombatRoom.Instance?.GetCreatureNode(cardPlay.Target);
                 float hue = 0;
                 var cards = Owner.PlayerCombatState!.Hand.Cards.Where(x => x.Tags.Contains(MarisaCardTags.Spark)).ToArray();
                 foreach (var card in cards)
@@ -83,8 +83,8 @@ namespace marisamod.Scripts.Cards
                     if (GodotObject.IsInstanceValid(vfx))
                         dir = vfx.Velocity.Angle();
                     else
-                        dir = (enemy.VfxSpawnPosition - player.VfxSpawnPosition).Angle();
-                    NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(CreatePowerUpSpark(player,enemy, card,hue,add ,dir));
+                        dir = ( enemyPos - player.VfxSpawnPosition).Angle();
+                    NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(CreatePowerUpSpark(player, enemyPos, card,hue,add ,dir));
                     PowerUp.UpgradeCardDamage(card, add);
                     hue += 1f / cards.Length;
                 }
@@ -121,13 +121,13 @@ namespace marisamod.Scripts.Cards
                     return new Vector4(v, p, q,1);
             }
         }
-        public static VfxSparkProjectile CreatePowerUpSpark(NCreature player, NCreature enemy, CardModel targetCard,float hue,int damage,float dir)
+        public static VfxSparkProjectile CreatePowerUpSpark(NCreature player,Vector2 enemyPos, CardModel targetCard,float hue,int damage,float dir)
         {
             VfxSparkProjectile vfx =VfxSparkProjectile.Create();
             vfx.SetAnimationParament(chasingSpeedMixMin:0.2f,chasingDirMixMin:0.2f);
             vfx.SetColor(Hsv2Rgba(hue,0.8f,1));
             vfx.PlayerOwner= player;
-            vfx.Position = enemy.VfxSpawnPosition;
+            vfx.Position = enemyPos;
             Vector2 target = player.VfxSpawnPosition;
             NCard targetCardNode = NCombatRoom.Instance?.Ui.Hand.GetCard(targetCard);
             Vector2? local =

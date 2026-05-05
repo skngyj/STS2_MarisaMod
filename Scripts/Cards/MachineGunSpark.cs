@@ -78,7 +78,7 @@ namespace marisamod.Scripts.Cards
                 var vfx = VfxSparkProjectile.Create(player,color);
                 vfx.ApplySizeFromDamage(DynamicVars.Damage.IntValue);
                 _vfx.Add(vfx);
-                //NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(_vfx[i]);
+                NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(_vfx[i]);
             }
         }
 
@@ -92,6 +92,7 @@ namespace marisamod.Scripts.Cards
                 return null;
             }
             vfx.Target = NCombatRoom.Instance?.GetCreatureNode(target).VfxSpawnPosition;
+            vfx.GetParent()?.RemoveChild(vfx);
             vfx.StartChasing();
             _vfx.Remove(vfx);
             return vfx;
