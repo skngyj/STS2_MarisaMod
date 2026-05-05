@@ -47,10 +47,17 @@ namespace marisamod.Scripts.Cards
         {
             await base.OnPlay(choiceContext, cardPlay);
             ArgumentNullException.ThrowIfNull(cardPlay.Target);
+            var vfx = VfxSparkProjectile.Create(this, new(1f, 1f, 1f, 1.0f),
+                NCombatRoom.Instance?.GetCreatureNode(cardPlay.Target));
             var damage = !AmplifiedInPlay ? DynamicVars.Damage.BaseValue : DynamicVars["DamageAmplified"].BaseValue;
             var dmgCmd = await DamageCmd.Attack(damage).FromCard(this).Targeting(cardPlay.Target)
                 .WithHitFx("vfx/vfx_attack_slash")
-                .WithHitVfxNode((Creature t) => VfxSparkProjectile.Create(this,new(1f,1f,1f,1.0f),NCombatRoom.Instance?.GetCreatureNode(t)))
+                .BeforeDamage(async delegate
+                {
+                    NCombatRoom.Instance?.AddChildSafely(vfx);
+                    await Cmd.Wait(vfx.VfxTime);
+                })
+                //.WithHitVfxNode((Creature t) => )
                 .Execute(choiceContext);
 
             var add = dmgCmd.Results.Sum(x => x.UnblockedDamage);
@@ -71,7 +78,13 @@ namespace marisamod.Scripts.Cards
                     // {
                     //     card.DynamicVars.Damage.UpgradeValueBy(add);
                     // 
-                    NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(CreatePowerUpSpark(player,enemy, card,hue,add));
+                    
+                    float dir;
+                    if (GodotObject.IsInstanceValid(vfx))
+                        dir = vfx.Velocity.Angle();
+                    else
+                        dir = (enemy.VfxSpawnPosition - player.VfxSpawnPosition).Angle();
+                    NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(CreatePowerUpSpark(player,enemy, card,hue,add ,dir));
                     PowerUp.UpgradeCardDamage(card, add);
                     hue += 1f / cards.Length;
                 }
@@ -108,7 +121,7 @@ namespace marisamod.Scripts.Cards
                     return new Vector4(v, p, q,1);
             }
         }
-        public static VfxSparkProjectile CreatePowerUpSpark(NCreature player, NCreature enemy, CardModel targetCard,float hue,int damage)
+        public static VfxSparkProjectile CreatePowerUpSpark(NCreature player, NCreature enemy, CardModel targetCard,float hue,int damage,float dir)
         {
             VfxSparkProjectile vfx =VfxSparkProjectile.Create();
             vfx.SetAnimationParament(chasingSpeedMixMin:0.2f,chasingDirMixMin:0.2f);
@@ -123,8 +136,7 @@ namespace marisamod.Scripts.Cards
             if (local != null)
                 target = local.Value;
             
-            float dir = (enemy.VfxSpawnPosition - player.VfxSpawnPosition).Angle();
-            vfx.VelocityInit(dir);
+            vfx.VelocityInit(dir,spread:0.1f*Mathf.Pi);
             vfx.StartDamping();
             vfx.Target = target;
             vfx.NoIdle = true;

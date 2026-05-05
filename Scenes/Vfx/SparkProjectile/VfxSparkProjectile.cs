@@ -300,7 +300,7 @@ public partial class VfxSparkProjectile : Node2D
         ApplySize(scale);
     }
 
-    public void VelocityInit(float dir = 0)
+    public void VelocityInit(float dir = 0,float spread = 0.4f * Mathf.Pi )
     {
         Vector2 containerSize = NCombatRoom.Instance?.CombatVfxContainer.Size ?? new Vector2(1,640);
         float baseScale = containerSize.Y;
@@ -310,7 +310,7 @@ public partial class VfxSparkProjectile : Node2D
         _startSpeed = speed;
         _dampingAcceleration = _startSpeed/_dampingDuration;
         
-        dir += -0.4f * Mathf.Pi + 0.8f * Mathf.Pi * GD.Randf();
+        dir += -spread +2*spread * Mathf.Pi * GD.Randf();
         
         Velocity = speed * Vector2.FromAngle(dir);
         Velocity *= (float)GD.RandRange(0.95f,1.05f);
