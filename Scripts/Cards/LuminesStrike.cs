@@ -46,14 +46,14 @@ namespace marisamod.Scripts.Cards;
 // }
 public class LuminesStrike : AbstractMarisaCard
 {
-    public LuminesStrike() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+    public LuminesStrike() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
     {
     }
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new CalculationBaseVar(7),
-        new ExtraDamageVar(3),
+        new ExtraDamageVar(4),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier((card, _) => card.Owner.PlayerCombatState!.Hand.Cards.Count(x => x.DeckVersion == null && x != card))
     ];
 

@@ -28,5 +28,6 @@
   "MARISAMOD-SIMPLE_LAUNCHER.flavor": "不管叫啥名字，一个手电筒始终还是手电筒……",
   "MARISAMOD-UNSTABLE_MAGIC_TOOL.title": "不稳定魔道具",
   "MARISAMOD-UNSTABLE_MAGIC_TOOL.description": "战斗开始时，为你[gold]抽牌堆[/gold]中至多[blue]3[/blue]张牌添加[gold]附魔[/gold][gold]星彩[/gold]直到战斗结束。",
-  "MARISAMOD-UNSTABLE_MAGIC_TOOL.flavor": "..."
+  "MARISAMOD-UNSTABLE_MAGIC_TOOL.flavor": "...",
+  "SEA_GLASS.MARISA_CHARACTER.title": "星空玻璃"
 }

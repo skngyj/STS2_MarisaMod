@@ -41,7 +41,8 @@ public class OrrerysGalaxy : AbstractMarisaCard
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DynamicVar("PowerDamage", 1),
-        new DynamicVar("PowerBlock", 1)
+        new DynamicVar("PowerBlock", 1),
+        new DynamicVar("Power",1)
     ];
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
@@ -51,12 +52,14 @@ public class OrrerysGalaxy : AbstractMarisaCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars["PowerDamage"].UpgradeValueBy(1);
+        //DynamicVars["PowerDamage"].UpgradeValueBy(1);
+        DynamicVars["Power"].UpgradeValueBy(1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await PowerCmd.Apply<OrrerysGalaxyBlockPower>(choiceContext, Owner.Creature, DynamicVars["PowerBlock"].IntValue, Owner.Creature, this);
-        await PowerCmd.Apply<OrrerysGalaxyDamagePower>(choiceContext, Owner.Creature, DynamicVars["PowerDamage"].IntValue, Owner.Creature, this);
+        await PowerCmd.Apply<OrrerysGalaxyPower>(choiceContext, Owner.Creature, DynamicVars["PowerBlock"].IntValue, Owner.Creature, this);
+        // await PowerCmd.Apply<OrrerysGalaxyBlockPower>(choiceContext, Owner.Creature, DynamicVars["PowerBlock"].IntValue, Owner.Creature, this);
+        // await PowerCmd.Apply<OrrerysGalaxyDamagePower>(choiceContext, Owner.Creature, DynamicVars["PowerDamage"].IntValue, Owner.Creature, this);
     }
 }

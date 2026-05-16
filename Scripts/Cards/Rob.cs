@@ -9,7 +9,7 @@ namespace marisamod.Scripts.Cards
 {
     public class Rob : AbstractAmplifiedCard
     {
-        public Rob() : base(1, 1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+        public Rob() : base(1, 1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
         {
         }
 

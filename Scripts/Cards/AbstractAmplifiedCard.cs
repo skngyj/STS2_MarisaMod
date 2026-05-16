@@ -74,54 +74,58 @@ namespace marisamod.Scripts.Cards
         {
             if (RunState == null)
                 return;
-            if (Owner.PlayerCombatState != null)
+            if (Owner.PlayerCombatState == null) return;
+            switch (Pile)
             {
                 //if (Owner.PlayerCombatState.Hand.Cards.Contains(this))
-                if (Pile is { Type: PileType.Hand })
+                case { Type: PileType.Hand } when Owner.Creature.HasPower<OneTimeOffPower>():
+                    //SetAmplifyState(false, false);
+                    AmplifiedInPreview = false;
+                    break;
+                case { Type: PileType.Hand } when Owner.Creature.HasPower<MillisecondPulsarsPower>() ||
+                                                  Owner.Creature.HasPower<PulseMagicPower>():
+                    //SetAmplifyState(true, true);
+                    AmplifiedInPreview = true;
+                    break;
+                case { Type: PileType.Hand } when Owner.PlayerCombatState.Energy < EnergyCost.GetWithModifiers(CostModifiers.All):
+                    //SetAmplifyState(false, false);
+                    AmplifiedInPreview = false;
+                    break;
+                case { Type: PileType.Hand }:
                 {
-                    if (Owner.Creature.HasPower<OneTimeOffPower>())
+                    if (Owner.PlayerCombatState.Energy >=
+                        EnergyCost.GetWithModifiers(CostModifiers.All) + KickerCost)
                     {
-                        SetAmplifyState(false, false);
+                        //SetAmplifyState(true, false);
+                        AmplifiedInPreview = true;
                     }
-                    else if (Owner.Creature.HasPower<MillisecondPulsarsPower>() ||
-                             Owner.Creature.HasPower<PulseMagicPower>())
-                    {
-                        SetAmplifyState(true, true);
-                    }
-                    else if (Owner.PlayerCombatState.Energy < EnergyCost.GetWithModifiers(CostModifiers.All))
-                    {
-                        SetAmplifyState(false, false);
-                    }
-                    else if (Owner.PlayerCombatState.Energy >=
-                             EnergyCost.GetWithModifiers(CostModifiers.All) + KickerCost)
-                    {
-                        SetAmplifyState(true, false);
-                    }
+
+                    break;
                 }
-                else if (Pile is { Type: PileType.Discard or PileType.Draw or PileType.Exhaust })
-                {
-                    SetAmplifyState(false, false);
-                }
+                case { Type: PileType.Discard or PileType.Draw or PileType.Exhaust }:
+                    //SetAmplifyState(false, false);
+                    AmplifiedInPreview = false;
+                    break;
             }
         }
 
-        private void SetAmplifyState(bool isAmplified, bool costFree)
-        {
-            AmplifiedInPreview = isAmplified;
-            //IsAmplified = isAmplified;
-            // if (isAmplified && !costFree && !_costModifiedForAmplify)
-            // {
-            //     EnergyCost.AddThisCombat(KickerCost);
-            //     _costModifiedForAmplify = true;
-            // }
-            //
-            // if (!isAmplified && _costModifiedForAmplify || costFree && _costModifiedForAmplify)
-            // {
-            //     EnergyCost.AddThisCombat(-KickerCost);
-            //     _costModifiedForAmplify = false;
-            // }
-            //TODO CardText update
-        }
+        // private void SetAmplifyState(bool isAmplified, bool costFree)
+        // {
+        //     AmplifiedInPreview = isAmplified;
+        //     //IsAmplified = isAmplified;
+        //     // if (isAmplified && !costFree && !_costModifiedForAmplify)
+        //     // {
+        //     //     EnergyCost.AddThisCombat(KickerCost);
+        //     //     _costModifiedForAmplify = true;
+        //     // }
+        //     //
+        //     // if (!isAmplified && _costModifiedForAmplify || costFree && _costModifiedForAmplify)
+        //     // {
+        //     //     EnergyCost.AddThisCombat(-KickerCost);
+        //     //     _costModifiedForAmplify = false;
+        //     // }
+        //     //TODO CardText update
+        // }
 
         public override Task AfterCardEnteredCombat(CardModel card)
         {
@@ -155,14 +159,14 @@ namespace marisamod.Scripts.Cards
         //     return Task.CompletedTask;
         // }
 
-        public override Task BeforeCardAutoPlayed(CardModel card, Creature? target, AutoPlayType type)
-        {
-            if (card == this)
-            {
-                SetAmplifyState(true, true);
-            }
-
-            return Task.CompletedTask;
-        }
+        // public override Task BeforeCardAutoPlayed(CardModel card, Creature? target, AutoPlayType type)
+        // {
+        //     if (card == this)
+        //     {
+        //         SetAmplifyState(true, true);
+        //     }
+        //
+        //     return Task.CompletedTask;
+        // }
     }
 }

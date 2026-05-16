@@ -18,7 +18,7 @@ namespace marisamod.Scripts.Cards
         protected override IEnumerable<DynamicVar> CanonicalVars =>
             base.CanonicalVars.Concat(
             [
-                new BlockVar(8m, ValueProp.Move)
+                new BlockVar(9m, ValueProp.Move)
             ]);
 
         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

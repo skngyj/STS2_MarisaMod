@@ -10,7 +10,7 @@ namespace marisamod.Scripts.Cards
 {
     public class OortCloud : AbstractAmplifiedCard
     {
-        public OortCloud() : base(1, 1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
+        public OortCloud() : base(1, 1, CardType.Power, CardRarity.Rare, TargetType.Self)
         {
         }
 

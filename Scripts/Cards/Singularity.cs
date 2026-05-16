@@ -8,7 +8,7 @@ namespace marisamod.Scripts.Cards
 {
     public class Singularity : AbstractMarisaCard
     {
-        public Singularity() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+        public Singularity() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
         {
         }
 

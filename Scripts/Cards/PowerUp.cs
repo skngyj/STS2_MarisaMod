@@ -35,15 +35,22 @@ namespace marisamod.Scripts.Cards
             {
                 card.DynamicVars.CalculationBase.UpgradeValueBy(amount);
             }
-            else if (card.DynamicVars.ContainsKey("Damage"))
-            {
-                card.DynamicVars.Damage.UpgradeValueBy(amount);
-            }
+            // else if (card.DynamicVars.ContainsKey("Damage"))
+            // {
+            //     card.DynamicVars.Damage.UpgradeValueBy(amount);
+            // }
 
-            if (card.DynamicVars.ContainsKey("DamageAmplified"))
+            foreach (var dynamicVar in card.DynamicVars)
             {
-                card.DynamicVars["DamageAmplified"].UpgradeValueBy(amount);
+                if (dynamicVar.Value is DamageVar)
+                {
+                    dynamicVar.Value.UpgradeValueBy(amount);
+                }
             }
+            // if (card.DynamicVars.ContainsKey("DamageAmplified"))
+            // {
+            //     card.DynamicVars["DamageAmplified"].UpgradeValueBy(amount);
+            // }
         }
     }
 }

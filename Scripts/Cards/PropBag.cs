@@ -1,12 +1,20 @@
+using System.Diagnostics;
 using marisamod.Scripts.Powers;
 using marisamod.Scripts.Relics;
+using MegaCrit.Sts2.Core.Audio.Debug;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Runs.History;
+using MegaCrit.Sts2.Core.Saves;
 
 namespace marisamod.Scripts.Cards;
 
@@ -69,11 +77,26 @@ public class PropBag : AbstractMarisaCard
     {
         //1-9: uncommon; 0: rare
         var odd = Owner.RunState.Rng.CombatCardSelection.NextInt(10);
-        var pick = odd == 0
-            ? PoolRare.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault()!.ToMutable()
-            : PoolUncommon.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault()!.ToMutable();
 
-        var relic = await RelicCmd.Obtain(pick, Owner);
+
+        var poolUncommon = PoolUncommon.Where(r => Owner.Relics.FirstOrDefault(x => x.Id == r!.Id) == null).ToList();
+        var poolRare = PoolRare.Where(r => Owner.Relics.FirstOrDefault(x => x.Id == r!.Id) == null).ToList();
+        RelicModel? pick;
+        if ((odd == 0 || poolUncommon.Count == 0) && poolRare.Count > 0)
+        {
+            pick = poolRare.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault();
+        }
+        else if (poolUncommon.Count > 0)
+        {
+            pick = poolUncommon.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault();
+        }
+        else
+        {
+            Log.Info("PropBag.OnPlay: no avail relic");
+            return;
+        }
+
+        var relic = await Obtain(pick!.ToMutable(), Owner);
 
         PropBagPower? pow;
         if (Owner.Creature.HasPower<PropBagPower>())
@@ -89,5 +112,29 @@ public class PropBag : AbstractMarisaCard
         pow?.AddRelicToList(relic);
 
         Log.Info($"PropBag.OnPlay: odd: {odd},pick: {pick}, relic: {relic}, pow: {pow}");
+    }
+
+
+    private static async Task<RelicModel> Obtain(RelicModel relic, Player player, int index = -1)
+    {
+        relic.AssertMutable();
+        var runState = player.RunState;
+        // runState.CurrentMapPointHistoryEntry?.GetEntry(player.NetId).RelicChoices.Add(new ModelChoiceHistoryEntry(relic.Id, wasPicked: true));
+        player.AddRelicInternal(relic, index);
+        // if (!relic.IsStackable)
+        // {
+        //     player.RelicGrabBag.Remove(relic);
+        //     runState.SharedRelicGrabBag.Remove(relic);
+        // }
+        if (LocalContext.IsMe(player))
+        {
+            NRun.Instance?.GlobalUi.RelicInventory.AnimateRelic(relic);
+            NDebugAudioManager.Instance?.Play("relic_get.mp3");
+            SaveManager.Instance.MarkRelicAsSeen(relic);
+        }
+
+        relic.FloorAddedToDeck = runState.TotalFloor;
+        await relic.AfterObtained();
+        return relic;
     }
 }

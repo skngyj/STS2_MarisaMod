@@ -16,7 +16,7 @@ namespace marisamod.Scripts.Cards
         //public override string PortraitPath => $"res://img/cards/DragonMeteor_p.png";
 
         protected override IEnumerable<DynamicVar> CanonicalVars => [
-            new DamageVar(12m, ValueProp.Move),
+            new DamageVar(14m, ValueProp.Move),
             new EnergyVar(2)
         ];
         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -33,7 +33,7 @@ namespace marisamod.Scripts.Cards
 
         protected override void OnUpgrade()
         {
-            DynamicVars.Damage.UpgradeValueBy(5m);
+            DynamicVars.Damage.UpgradeValueBy(4m);
         }
 
         private static bool HandEnchanted(CardModel card)
