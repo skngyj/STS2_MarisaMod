@@ -13,7 +13,6 @@ namespace marisamod.Scripts.Cards
 {
     public class MagicAbsorber : AbstractMarisaCard
     {
-        
         public MagicAbsorber() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
         {
         }
@@ -25,25 +24,21 @@ namespace marisamod.Scripts.Cards
         public override bool GainsBlock => true;
 
         protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Concat([
-            new BlockVar(10m, ValueProp.Move)//,
+            new BlockVar(10m, ValueProp.Move) //,
             //new BlockVar("ExtraBlock",3,ValueProp.Move)
-            ]);
+        ]);
 
         protected override void OnUpgrade()
         {
             DynamicVars.Block.UpgradeValueBy(4m);
         }
 
-        private static readonly HashSet<Type> ExcludedTypes =
-        [
-            typeof(EbbPower),
-        ];
         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         {
             await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
-            var pows = Owner.Creature.Powers.Where(p => p.Type == PowerType.Debuff && !ExcludedTypes.Contains(p.GetType())).TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).ToArray();
-            if (pows.Length > 0)
-                await PowerCmd.Remove(pows[0]);
+            var pow = Owner.Creature.Powers.Where(p => p.TypeForCurrentAmount == PowerType.Debuff).TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault();
+            if (pow != null)
+                await PowerCmd.Remove(pow);
             // if (Owner.PlayerCombatState != null)
             // {
             //     var cards = Owner.PlayerCombatState.Hand.Cards.Where(c => c.Type is CardType.Status).ToArray();

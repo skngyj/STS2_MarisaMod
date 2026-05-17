@@ -34,41 +34,7 @@ public class ShootTheMoon : AbstractAmplifiedCard
         DynamicVars.Damage.UpgradeValueBy(3);
         DynamicVars["DamageAmplified"].UpgradeValueBy(5);
     }
-
-    private static readonly HashSet<Type> ExcludedTypes =
-    [
-        typeof(ReattachPower),
-        typeof(VitalSparkPower),
-        typeof(SurprisePower ),
-        typeof(ThieveryPower),
-        typeof(SwipePower),
-        typeof(PossessSpeedPower),
-    ];
-
-    private async Task RemovePower(PowerModel? power,Creature? creature = null)
-    {
-        if (power == default) return;
-        if (creature?.Monster is TheForgotten or TheLost) return;
-        // if (power is ThieveryPower thieveryPower && creature?.Monster is GremlinMerc)
-        // {
-        //     if (thieveryPower.Target?.IsPlayer == true)
-        //     {
-        //         await PlayerCmd.GainGold(thieveryPower.DynamicVars.Gold.IntValue, thieveryPower.Target.Player!);
-        //     }
-        //     var monsterPos = NCombatRoom.Instance?.GetCreatureNode(creature)?.VfxSpawnPosition;
-        //     if (monsterPos.HasValue)
-        //     {
-        //         VfxCmd.PlayVfx(monsterPos.Value, "vfx/vfx_coin_explosion_regular",
-        //             NCombatRoom.Instance?.CombatVfxContainer);
-        //     }
-        // }
-        //
-        // if (creature is TheForgotten && power is PossessSpeedPower possessSpeedPower )
-        // {
-        //     
-        // }
-        await PowerCmd.Remove(power);
-    }
+    
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await base.OnPlay(choiceContext, cardPlay);
@@ -80,13 +46,13 @@ public class ShootTheMoon : AbstractAmplifiedCard
 
         if (Owner.RunState.CurrentRoom!.RoomType != MegaCrit.Sts2.Core.Rooms.RoomType.Boss)
         {
-            var pows = cardPlay.Target.Powers.Where(p => p.Type == PowerType.Buff && !ExcludedTypes.Contains(p.GetType())).ToList();
+            var pows = cardPlay.Target.Powers.Where(p => p.TypeForCurrentAmount == PowerType.Buff).ToList();
             
             if (AmplifiedInPlay)
             {
-                foreach (var item in pows)
+                foreach (var pow in pows)
                 {
-                    await RemovePower(item,cardPlay.Target);
+                    await PowerCmd.Remove(pow);
                 }
             }
             else
@@ -94,7 +60,7 @@ public class ShootTheMoon : AbstractAmplifiedCard
                 if (pows.Count != 0)
                 {
                     var pow = pows.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault();
-                    await RemovePower(pow,cardPlay.Target);
+                    await PowerCmd.Remove(pow);
                 }
             }
         }
