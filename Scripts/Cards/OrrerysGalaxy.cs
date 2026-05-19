@@ -58,7 +58,7 @@ public class OrrerysGalaxy : AbstractMarisaCard
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await PowerCmd.Apply<OrrerysGalaxyPower>(choiceContext, Owner.Creature, DynamicVars["PowerBlock"].IntValue, Owner.Creature, this);
+        await PowerCmd.Apply<OrrerysGalaxyPower>(choiceContext, Owner.Creature, DynamicVars["Power"].IntValue, Owner.Creature, this);
         // await PowerCmd.Apply<OrrerysGalaxyBlockPower>(choiceContext, Owner.Creature, DynamicVars["PowerBlock"].IntValue, Owner.Creature, this);
         // await PowerCmd.Apply<OrrerysGalaxyDamagePower>(choiceContext, Owner.Creature, DynamicVars["PowerDamage"].IntValue, Owner.Creature, this);
     }
