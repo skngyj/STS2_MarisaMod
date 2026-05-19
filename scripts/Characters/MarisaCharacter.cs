@@ -54,6 +54,8 @@ public class MarisaCharacter : PlaceholderCharacterModel
     // public override string CharacterSelectSfx => null;
     public override string CharacterTransitionSfx => "event:/sfx/ui/wipe_ironclad";
 
+    public override Color EnergyLabelOutlineColor => new(0f, 0.1f, 0.7f);
+
     public override CardPoolModel CardPool => ModelDb.CardPool<MarisaCardPool>();
     public override RelicPoolModel RelicPool => ModelDb.RelicPool<MarisaRelicPool>();
     public override PotionPoolModel PotionPool => ModelDb.PotionPool<MarisaPotionPool>();
