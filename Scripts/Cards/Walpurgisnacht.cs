@@ -20,7 +20,7 @@ public class Walpurgisnacht : AbstractAmplifiedCard //AbstractMarisaCard
         base.CanonicalVars.Concat(
         [
             new DynamicVar("Power", 1),
-            new DynamicVar("PowerAmp", 1)
+            new DynamicVar("PowerAmp", 2)
         ]);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
@@ -28,7 +28,8 @@ public class Walpurgisnacht : AbstractAmplifiedCard //AbstractMarisaCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars["PowerAmp"].UpgradeValueBy(1);
+        //DynamicVars["PowerAmp"].UpgradeValueBy(1);
+        AddKeyword(CardKeyword.Retain);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

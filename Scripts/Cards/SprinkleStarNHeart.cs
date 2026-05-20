@@ -16,7 +16,7 @@ public class SprinkleStarNHeart : AbstractAmplifiedCard
     //public override string PortraitPath => "res://marisamod/images/cards/marisamod-test_marisa_card.png";
 
     protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Concat([
-        new DynamicVar("Power", 2)
+        new DynamicVar("Power", 4)
     ]);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
@@ -26,7 +26,7 @@ public class SprinkleStarNHeart : AbstractAmplifiedCard
 
     protected override void OnUpgrade()
     {
-        DynamicVars["Power"].UpgradeValueBy(1);
+        DynamicVars["Power"].UpgradeValueBy(2);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

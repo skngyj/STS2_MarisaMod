@@ -58,7 +58,7 @@ namespace marisamod.Scripts.Cards
                 {
                     if (Enchantment is StarlitEnchantment enchantment)
                     {
-                        enchantment.AmplifyCost = DynamicVars.Energy.BaseValue;
+                        enchantment.AmplifyCost = DynamicVars.Energy.IntValue;
                     }
 
                     await PlayerCmd.LoseEnergy(DynamicVars.Energy.BaseValue, Owner);

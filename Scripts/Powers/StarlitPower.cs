@@ -18,7 +18,7 @@ public class StarlitPower : AbstractMarisaPower
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DynamicVar("DamageEot", 1),
-        new DynamicVar("BlockEot", 2)
+        new DynamicVar("BlockEot", 1)
     ];
 
 
@@ -56,6 +56,6 @@ public class StarlitPower : AbstractMarisaPower
 
     {
         DynamicVars["DamageEot"].BaseValue = Amount * (1 + Owner.GetPowerAmount<OrrerysGalaxyDamagePower>() + Owner.GetPowerAmount<OrrerysGalaxyPower>());
-        DynamicVars["BlockEot"].BaseValue = Amount * (2 + Owner.GetPowerAmount<OrrerysGalaxyBlockPower>() + Owner.GetPowerAmount<OrrerysGalaxyPower>());
+        DynamicVars["BlockEot"].BaseValue = Amount * (1 + Owner.GetPowerAmount<OrrerysGalaxyBlockPower>() + Owner.GetPowerAmount<OrrerysGalaxyPower>());
     }
 }
