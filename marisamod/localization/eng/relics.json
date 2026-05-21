@@ -29,5 +29,8 @@
   "MARISAMOD-UNSTABLE_MAGIC_TOOL.title": "Unstable Magic Tool",
   "MARISAMOD-UNSTABLE_MAGIC_TOOL.description": "At the start of each battle, [gold]Enchant[/gold] up to [blue]3[/blue] cards in your [gold]Draw Pile[/gold] with [gold]Starlit[/gold] for the rest of combat.",
   "MARISAMOD-UNSTABLE_MAGIC_TOOL.flavor": "...",
+  "MARISAMOD-BREAD_OF_A_WASHOKU_LOVER.title": "Bread of a Washoku Lover",
+  "MARISAMOD-BREAD_OF_A_WASHOKU_LOVER.description": "Heal [blue]1[/blue] [gold]Hp[/gold] when you [gold]Exhaust[/gold] a [gold]Curse[/gold] or [gold]Status[/gold].\nWhen triggered 13 times, you gain [blue]13[/blue] max Hp,and this relic no longer works.",
+  "MARISAMOD-BREAD_OF_A_WASHOKU_LOVER.flavor": "\"Can you remember how many slices of bread you have eaten until now?\"\n\"Thirteen. I prefer Japanese food.\"",
   "SEA_GLASS.MARISA_CHARACTER.title": "Starlit Glass"
 }

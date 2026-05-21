@@ -29,5 +29,8 @@
   "MARISAMOD-UNSTABLE_MAGIC_TOOL.title": "不稳定魔道具",
   "MARISAMOD-UNSTABLE_MAGIC_TOOL.description": "战斗开始时，为你[gold]抽牌堆[/gold]中至多[blue]3[/blue]张牌添加[gold]附魔[/gold][gold]星彩[/gold]直到战斗结束。",
   "MARISAMOD-UNSTABLE_MAGIC_TOOL.flavor": "...",
+  "MARISAMOD-BREAD_OF_A_WASHOKU_LOVER.title": "和食主义者的面包",
+  "MARISAMOD-BREAD_OF_A_WASHOKU_LOVER.description": "每当你[gold]消耗[/gold]一张[gold]诅咒[/gold]或[gold]状态[/gold]牌，恢复[blue]1[/blue]点生命值。\n触发13次后，获得[blue]13[/blue]最大生命值，然后这个遗物失效。",
+  "MARISAMOD-BREAD_OF_A_WASHOKU_LOVER.flavor": "“你能记得清楚到今天为止自己吃过的面包的数量吗？”\n“13块。我是和食主义者。”",
   "SEA_GLASS.MARISA_CHARACTER.title": "星空玻璃"
 }

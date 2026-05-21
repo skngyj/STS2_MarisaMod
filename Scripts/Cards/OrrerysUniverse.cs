@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 
 namespace marisamod.Scripts.Cards;
 
-public class OrrerysGalaxy : AbstractMarisaCard
+public class OrrerysUniverse : AbstractMarisaCard
 {
     // public OrrerysGalaxy() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
     // {
@@ -34,7 +34,7 @@ public class OrrerysGalaxy : AbstractMarisaCard
     //         await PowerCmd.Apply<StarlitPower>(Owner.Creature, amt, Owner.Creature, this);
     //     }
     // }
-    public OrrerysGalaxy() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
+    public OrrerysUniverse() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
     {
     }
 
@@ -58,7 +58,8 @@ public class OrrerysGalaxy : AbstractMarisaCard
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await PowerCmd.Apply<OrrerysGalaxyPower>(choiceContext, Owner.Creature, DynamicVars["Power"].IntValue, Owner.Creature, this);
+        //await PowerCmd.Apply<OrrerysGalaxyPower>(choiceContext, Owner.Creature, DynamicVars["Power"].IntValue, Owner.Creature, this);
+         await PowerCmd.Apply<OrrerysUniversePower>(choiceContext, Owner.Creature, DynamicVars["Power"].IntValue, Owner.Creature, this);
         // await PowerCmd.Apply<OrrerysGalaxyBlockPower>(choiceContext, Owner.Creature, DynamicVars["PowerBlock"].IntValue, Owner.Creature, this);
         // await PowerCmd.Apply<OrrerysGalaxyDamagePower>(choiceContext, Owner.Creature, DynamicVars["PowerDamage"].IntValue, Owner.Creature, this);
     }

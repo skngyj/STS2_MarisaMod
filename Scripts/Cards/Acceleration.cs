@@ -1,34 +1,45 @@
-// using MegaCrit.Sts2.Core.Commands;
-// using MegaCrit.Sts2.Core.Entities.Cards;
-// using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-// using MegaCrit.Sts2.Core.HoverTips;
-// using MegaCrit.Sts2.Core.Localization.DynamicVars;
-// using MegaCrit.Sts2.Core.Models.Cards;
-//
-// namespace marisamod.Scripts.Cards
-// {
-//     public class Acceleration : AbstractMarisaCard
-//     {
-//         public Acceleration() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
-//         {
-//         }
-//
-//         protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<Burn>()];
-//
-//         protected override IEnumerable<DynamicVar> CanonicalVars =>
-//         [
-//             new CardsVar(3)
-//         ];
-//
-//         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-//         {
-//             await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, Owner);
-//             await CardPileCmd.AddGeneratedCardToCombat(CombatState!.CreateCard<Burn>(Owner), PileType.Hand, addedByPlayer: true);
-//         }
-//
-//         protected override void OnUpgrade()
-//         {
-//             DynamicVars.Cards.UpgradeValueBy(1);
-//         }
-//     }
-// }
+using BaseLib.Utils;
+using Godot;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Models.Cards;
+
+namespace marisamod.Scripts.Cards;
+
+[Pool(typeof(EventCardPool))]
+public class Acceleration : AbstractAmplifiedCard //AbstractMarisaCard
+{
+    public Acceleration() : base(0, 1, CardType.Skill, CardRarity.Event, TargetType.Self)
+    {
+    }
+
+    //protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<Burn>()];
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Concat(
+    [
+        new CardsVar(2),
+        new DynamicVar("DrawAmp", 1)
+    ]);
+
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        var draw = Mathf.Min(Owner.PlayerCombatState!.DrawPile.Cards.Count, DynamicVars.Cards.IntValue);
+        if (draw > 0)
+            await CardPileCmd.Draw(choiceContext, draw, Owner);
+        if (AmplifiedInPlay)
+        {
+            await CardPileCmd.Draw(choiceContext, DynamicVars["DrawAmp"].BaseValue, Owner);
+        }
+        //await CardPileCmd.AddGeneratedCardToCombat(CombatState!.CreateCard<Burn>(Owner), PileType.Hand, addedByPlayer: true);
+    }
+
+    protected override void OnUpgrade()
+    {
+        //DynamicVars.Cards.UpgradeValueBy(1);
+        DynamicVars["DrawAmp"].UpgradeValueBy(1);
+    }
+}

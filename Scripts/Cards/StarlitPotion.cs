@@ -50,10 +50,11 @@ public class StarlitPotion : AbstractMarisaCard
         // }
         //
         // await Cmd.Wait(0.25f);
+        var enchantment = ModelDb.Enchantment<StarlitEnchantment>().ToMutable();
         var cards = await CardSelectCmd.FromHand(choiceContext,
             Owner,
             new CardSelectorPrefs(SelectionScreenPrompt, 0, DynamicVars.Cards.IntValue),
-            null,
+            enchantment.CanEnchant,
             this);
         
         foreach (var card in cards)

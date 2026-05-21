@@ -55,7 +55,7 @@ public class StarlitPower : AbstractMarisaPower
     private void CalculateVars()
 
     {
-        DynamicVars["DamageEot"].BaseValue = Amount * (1 + Owner.GetPowerAmount<OrrerysGalaxyDamagePower>() + Owner.GetPowerAmount<OrrerysGalaxyPower>());
+        DynamicVars["DamageEot"].BaseValue = Amount * (1 + Owner.GetPowerAmount<OrrerysUniversePower>() + Owner.GetPowerAmount<OrrerysGalaxyPower>());
         DynamicVars["BlockEot"].BaseValue = Amount * (1 + Owner.GetPowerAmount<OrrerysGalaxyBlockPower>() + Owner.GetPowerAmount<OrrerysGalaxyPower>());
     }
 }

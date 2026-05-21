@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bigsd2b6oo1rw"
-path="res://.godot/imported/marisamod-orrerys_galaxy.png-e34281855c6738c5e2cf1366bfea294d.ctex"
+uid="uid://dy2us63s48ko7"
+path="res://.godot/imported/marisamod-orrerys_universe.png-9c3e5acf449d8867e9238a0ca78acde1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://marisamod/images/cards/marisamod-orrerys_galaxy.png"
-dest_files=["res://.godot/imported/marisamod-orrerys_galaxy.png-e34281855c6738c5e2cf1366bfea294d.ctex"]
+source_file="res://marisamod/images/cards/marisamod-orrerys_universe.png"
+dest_files=["res://.godot/imported/marisamod-orrerys_universe.png-9c3e5acf449d8867e9238a0ca78acde1.ctex"]
 
 [params]
 

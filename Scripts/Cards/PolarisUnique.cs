@@ -1,4 +1,5 @@
 using marisamod.Scripts.Powers;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -24,9 +25,15 @@ namespace marisamod.Scripts.Cards
 
         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         {
+            var card = (await CardSelectCmd.FromHand(choiceContext,
+                Owner,
+                new CardSelectorPrefs(SelectionScreenPrompt, 0, DynamicVars.Cards.IntValue),
+                card => card.EnergyCost.Canonical != -1,
+                this)).FirstOrDefault();
+            card?.EnergyCost.AddThisCombat(1);
             await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
             //EnergyCost.AddThisCombat(1);
-            await PowerCmd.Apply<PolarisUniquePower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
+            // await PowerCmd.Apply<PolarisUniquePower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
         }
     }
 }

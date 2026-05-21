@@ -8,6 +8,7 @@ using marisamod.Scripts.Cards.Colorless;
 using marisamod.Scripts.Characters;
 using marisamod.Scripts.PatchesNModels;
 using marisamod.Scripts.Powers;
+using marisamod.Scripts.Relics;
 using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Commands;
@@ -391,6 +392,26 @@ public class Entry
                     }
                 }
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(TrashHeap),"Relics",MethodType.Getter)]
+    public static class TrashHeapRelicPatch
+    {
+        [HarmonyPostfix]
+        static void AddRelic(ref RelicModel[] __result)
+        {
+            __result = __result.Concat([ModelDb.Relic<BreadOfAWashokuLover>()]).ToArray();
+        }
+    }
+    
+    [HarmonyPatch(typeof(TrashHeap),"Cards",MethodType.Getter)]
+    public static class TrashHeapCardsPatch
+    {
+        [HarmonyPostfix]
+        static void AddCard(ref CardModel[] __result)
+        {
+            __result = __result.Concat([ModelDb.Card<Acceleration>()]).ToArray();
         }
     }
 
