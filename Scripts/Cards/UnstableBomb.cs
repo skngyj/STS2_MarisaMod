@@ -37,11 +37,13 @@ public class UnstableBomb : AbstractAmplifiedCard //AbstractMarisaCard
         await base.OnPlay(choiceContext, cardPlay);
         // var hit = DynamicVars["RepeatBase"].IntValue +
         //           RandomPool.TakeRandom(1, RunState!.Rng.CombatCardSelection).FirstOrDefault();
+        var minDmg = DynamicVars.Damage.IntValue;
+        var maxDmg = DynamicVars["DamageAmplified"].IntValue;
         var hit = DynamicVars["RepeatBase"].IntValue;
         hit += AmplifiedInPlay ? DynamicVars["RepeatAmp"].IntValue : 0;
         for (var i = 0; i < hit; i++)
         {
-            var damage = RunState!.Rng.CombatCardSelection.NextInt(DynamicVars.Damage.IntValue, DynamicVars["DamageAmplified"].IntValue + 1);
+            var damage = RunState!.Rng.CombatCardSelection.NextInt(minDmg, maxDmg + 1);
 
             await DamageCmd.Attack(damage).FromCard(this)
                 .TargetingRandomOpponents(CombatState!)
