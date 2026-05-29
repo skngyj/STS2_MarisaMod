@@ -33,17 +33,34 @@ public class BewitchedHakkero : AbstractMarisaRelic
         //     cnt = DynamicVars["PowerAmp"].IntValue;
         await PowerCmd.Apply<ChargeUpPower>(context, Owner.Creature, cnt, Owner.Creature, null);
         //return base.AfterCardPlayed(context, cardPlay);
-    }
-
-    public override async Task AfterCardExhausted(PlayerChoiceContext choiceContext, CardModel card, bool causedByEthereal)
-    {
-        //return base.AfterCardExhausted(choiceContext, card, causedByEthereal);
-        if (card.Owner == Owner)
+        
+        var newRec = Owner.PlayerCombatState!.ExhaustPile.Cards.Count;
+        if (newRec > _rec)
         {
-            var cnt = DynamicVars["Power"].IntValue;
-            await PowerCmd.Apply<ChargeUpPower>(choiceContext, Owner.Creature, cnt, Owner.Creature, null);
+            await PowerCmd.Apply<ChargeUpPower>(context, Owner.Creature, cnt, Owner.Creature, null);
         }
     }
+
+    private int _rec;
+
+    public override Task BeforeCardPlayed(CardPlay cardPlay)
+    {
+        if (cardPlay.Card.Owner == Owner)
+        {
+            _rec = Owner.PlayerCombatState!.ExhaustPile.Cards.Count;
+        }
+        return Task.CompletedTask;
+    }
+
+    // public override async Task AfterCardExhausted(PlayerChoiceContext choiceContext, CardModel card, bool causedByEthereal)
+    // {
+    //     //return base.AfterCardExhausted(choiceContext, card, causedByEthereal);
+    //     if (card.Owner == Owner)
+    //     {
+    //         var cnt = DynamicVars["Power"].IntValue;
+    //         await PowerCmd.Apply<ChargeUpPower>(choiceContext, Owner.Creature, cnt, Owner.Creature, null);
+    //     }
+    // }
 
     public override EventModel ModifyNextEvent(EventModel currentEvent)
     {
