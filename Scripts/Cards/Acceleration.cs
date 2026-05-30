@@ -20,7 +20,7 @@ public class Acceleration : AbstractAmplifiedCard //AbstractMarisaCard
     }
 
     //protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<Burn>()];
-    public override CardPoolModel VisualCardPool => ModelDb.CardPool<MarisaCardPool>();
+    //public override CardPoolModel VisualCardPool => ModelDb.CardPool<MarisaCardPool>();
 
     protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Concat(
     [
