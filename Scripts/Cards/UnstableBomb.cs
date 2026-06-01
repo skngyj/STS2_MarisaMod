@@ -19,10 +19,12 @@ public class UnstableBomb : AbstractAmplifiedCard //AbstractMarisaCard
         base.CanonicalVars.Concat([
             new DamageVar(1, ValueProp.Move),
             new DamageVar("DamageAmplified", 4, ValueProp.Move),
+            new DamageVar("DamageOnPlay", 0, ValueProp.Move),
             new CalculationBaseVar(0),
             new ExtraDamageVar(1),
             new CalculatedDamageVar(ValueProp.Move).WithMultiplier((card, _) =>
-                card.RunState!.Rng.CombatCardSelection.NextInt(card.DynamicVars.Damage.IntValue, card.DynamicVars["DamageAmplified"].IntValue + 1)
+                    card.DynamicVars["DamageOnPlay"].BaseValue
+                //card.RunState!.Rng.CombatCardSelection.NextInt(card.DynamicVars.Damage.IntValue, card.DynamicVars["DamageAmplified"].IntValue + 1)
             ),
             new DynamicVar("RepeatBase", 2),
             new DynamicVar("RepeatAmp", 1)
@@ -55,7 +57,11 @@ public class UnstableBomb : AbstractAmplifiedCard //AbstractMarisaCard
         //         .WithHitFx("vfx/vfx_attack_slash")
         //         .Execute(choiceContext);
         // }
-        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this).WithHitCount(hit)
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage).FromCard(this).WithHitCount(hit).BeforeDamage(() =>
+            {
+                DynamicVars["DamageOnPlay"].BaseValue = RunState!.Rng.CombatCardSelection.NextInt(DynamicVars.Damage.IntValue, DynamicVars["DamageAmplified"].IntValue + 1);
+                return Task.CompletedTask;
+            })
             .TargetingRandomOpponents(CombatState!)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
