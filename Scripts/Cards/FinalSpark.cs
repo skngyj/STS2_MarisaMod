@@ -34,13 +34,13 @@ public class FinalSpark : AbstractMarisaCard
         DynamicVars.Damage.UpgradeValueBy(10);
     }
 
-    private int _sparkCount;
+    //private int _sparkCount;
 
     public override Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
     {
         if (!cardPlay.Card.Tags.Contains(MarisaCardTags.Spark) || cardPlay.Card == this || cardPlay.Card.Owner != Owner)
             return Task.CompletedTask;
-        _sparkCount++;
+        //_sparkCount++;
         EnergyCost.AddThisCombat(-DynamicVars.Energy.IntValue);
         return Task.CompletedTask;
     }
@@ -71,7 +71,7 @@ public class FinalSpark : AbstractMarisaCard
                 }
             })
             .Execute(choiceContext);
-        EnergyCost.AddThisCombat(_sparkCount);
-        _sparkCount = 0;
+        //EnergyCost.AddThisCombat(_sparkCount);
+        //_sparkCount = 0;
     }
 }

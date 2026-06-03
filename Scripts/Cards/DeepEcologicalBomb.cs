@@ -11,7 +11,7 @@ namespace marisamod.Scripts.Cards
 {
     public class DeepEcologicalBomb : AbstractAmplifiedCard
     {
-        public DeepEcologicalBomb() : base(1, 1, CardType.Attack, CardRarity.Uncommon, TargetType.RandomEnemy)
+        public DeepEcologicalBomb() : base(1, 1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
         {
         }
 
@@ -26,6 +26,7 @@ namespace marisamod.Scripts.Cards
 
         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         {
+            ArgumentNullException.ThrowIfNull(cardPlay.Target);
             await base.OnPlay(choiceContext, cardPlay);
             var combatState = CombatState ?? Owner.Creature.CombatState;
             if (combatState == null)
@@ -42,7 +43,7 @@ namespace marisamod.Scripts.Cards
                 //if (target == null) continue;
                 //await PowerCmd.Apply<DeepEcologicalBombPower>(choiceContext, target, DynamicVars["Power"].BaseValue, Owner.Creature, this);
                 var dmgCmd = await DamageCmd.Attack(DynamicVars.Damage.BaseValue).FromCard(this).WithHitCount(repeat)
-                    .TargetingRandomOpponents(CombatState!)
+                    .Targeting(cardPlay.Target)
                     .WithHitFx("vfx/vfx_attack_blunt")
                     .Execute(choiceContext);
 

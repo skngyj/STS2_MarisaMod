@@ -18,6 +18,8 @@ namespace marisamod.Scripts.Powers
     {
         public int ChargeUpThreshold => Owner.Player != null && Owner.Player.Relics.Any(x => x is SimpleLauncher) ? 6 : 8;
 
+        private const int MultCeiling = 4194304;
+
         public override PowerType Type => PowerType.Buff;
 
         public override PowerStackType StackType => PowerStackType.Counter;
@@ -69,6 +71,8 @@ namespace marisamod.Scripts.Powers
             }
 
             var mult = Mathf.FloorToInt(Mathf.Pow(2, Mathf.FloorToInt(Amount / (float)ChargeUpThreshold)));
+            if (mult > MultCeiling)
+                mult = MultCeiling;
             if (mult != _lastPhase)
             {
                 if (Owner.Player?.Character is MarisaCharacter)

@@ -10,6 +10,7 @@ namespace marisamod.Scripts.Enchantments;
 public class StarlitEnchantment : AbstractMarisaEnchantment
 {
     public int AmplifyCost = 0;
+    private const int SingleGainCeiling = 9999;
 
     public override bool CanEnchant(CardModel card)
     {
@@ -30,6 +31,8 @@ public class StarlitEnchantment : AbstractMarisaEnchantment
     {
         var amt = AmplifyCost + cardPlay.Resources.EnergySpent;
         var amtFin = Mathf.RoundToInt(Mathf.Pow(2, amt));
+        if (amtFin > SingleGainCeiling)
+            amtFin = SingleGainCeiling;
         if (cardPlay.Card == Card && amtFin > 0)
         {
             await PowerCmd.Apply<StarlitPower>(context, Card.Owner.Creature, amtFin, Card.Owner.Creature, Card);

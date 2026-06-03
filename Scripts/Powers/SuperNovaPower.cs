@@ -30,6 +30,19 @@ namespace marisamod.Scripts.Powers
         //         }
         // }
 
+        public override async Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
+        {
+            if (side != CombatSide.Player)
+            {
+                return;
+            }
+
+            if (Owner.Player != null)
+                foreach (CardModel item in CardPile.GetCards(Owner.Player, PileType.Hand).ToList())
+                {
+                    await CardCmd.Exhaust(choiceContext, item);
+                }
+        }
         // public override async Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
         // {
         //     if (side == CombatSide.Player)
@@ -48,30 +61,30 @@ namespace marisamod.Scripts.Powers
             }
         }
 
-        public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
-        {
-            foreach (var allCard in Owner.Player!.PlayerCombatState!.AllCards)
-            {
-                await ApplyEthereal(allCard);
-            }
-        }
+        // public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
+        // {
+        //     foreach (var allCard in Owner.Player!.PlayerCombatState!.AllCards)
+        //     {
+        //         await ApplyEthereal(allCard);
+        //     }
+        // }
 
-        public override async Task AfterCardEnteredCombat(CardModel card)
-        {
-            if (card.Owner == Owner.Player)
-            {
-                await ApplyEthereal(card);
-            }
-        }
+        // public override async Task AfterCardEnteredCombat(CardModel card)
+        // {
+        //     if (card.Owner == Owner.Player)
+        //     {
+        //         await ApplyEthereal(card);
+        //     }
+        // }
 
-        private static Task ApplyEthereal(CardModel card)
-        {
-            if (!card.Keywords.Contains(CardKeyword.Ethereal))
-            {
-                CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
-            }
-
-            return Task.CompletedTask;
-        }
+        // private static Task ApplyEthereal(CardModel card)
+        // {
+        //     if (!card.Keywords.Contains(CardKeyword.Ethereal))
+        //     {
+        //         CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
+        //     }
+        //
+        //     return Task.CompletedTask;
+        // }
     }
 }

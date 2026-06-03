@@ -61,7 +61,23 @@ public class DarkMatter : AbstractMarisaCard
         }
 
         var playCount = await GeneratePlayCount(CombatState!, null);
+        var cardPlay = new CardPlay
+        {
+            Card = card,
+            PlayCount = playCount,
+            Target = Owner.Creature,
+            IsAutoPlay = true,
+            PlayIndex = 0,
+            Resources = new ResourceInfo
+            {
+                EnergySpent = 0,
+                EnergyValue = card.EnergyCost.GetAmountToSpend(),
+                StarsSpent = 0,
+                StarValue = Math.Max(0, card.GetStarCostWithModifiers())
+            },
+            ResultPile = PileType.Exhaust
+        };
         for (var i = 0; i < playCount; i++)
-            await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, null);
+            await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
     }
 }
