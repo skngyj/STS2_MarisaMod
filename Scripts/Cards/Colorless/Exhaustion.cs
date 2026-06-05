@@ -19,14 +19,14 @@ namespace marisamod.Scripts.Cards.Colorless
 
         public override int MaxUpgradeLevel => 0;
 
-        public override decimal ModifyPowerAmountGiven(PowerModel power, Creature giver, decimal amount, Creature? target, CardModel? cardSource)
+
+        public override decimal ModifyPowerAmountGivenMultiplicative(PowerModel power, Creature giver, decimal amount, Creature? target, CardModel? cardSource)
         {
             if (power is ChargeUpPower && target == Owner.Creature && Owner.PlayerCombatState != null && Owner.PlayerCombatState.Hand.Cards.Contains(this))
             {
                 return 0;
             }
-
-            return base.ModifyPowerAmountGiven(power, giver, amount, target, cardSource);
+            return base.ModifyPowerAmountGivenMultiplicative(power, giver, amount, target, cardSource);
         }
     }
 }
