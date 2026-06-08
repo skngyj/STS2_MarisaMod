@@ -184,7 +184,7 @@
   "MARISAMOD-SUPER_PERSEIDS.title": "Super Perseids",
   "MARISAMOD-SUPER_PERSEIDS.description": "Deal {Damage:diff()} damage to a random enemy {Repeat:diff()} times.",
   "MARISAMOD-TREASURE_HUNTER.title": "Treasure Hunter",
-  "MARISAMOD-TREASURE_HUNTER.description": "Deal {Damage:diff()} damage.\nIf [gold]Fatal[/gold] against a Boss or Elite, add an extra [gold]Relic[/gold] to rewards of this combat.",
+  "MARISAMOD-TREASURE_HUNTER.description": "Deal {Damage:diff()} damage.\nIf [gold]Fatal[/gold] against a Boss or Elite, gain an additional [gold]Relic[/gold] reward.",
   "MARISAMOD-ULTRA_SHORT_WAVE.title": "Ultimate Shortwave",
   "MARISAMOD-ULTRA_SHORT_WAVE.description": "Gain {Energy:energyIcons()} and {Power:diff()} [gold]Charge-Up[/gold].\nIncrease this card's {Energy:energyIcons()} gain by 1 and [gold]Charge-Up[/gold] gain by {PowerInc:diff()}.",
   "MARISAMOD-UNSTABLE_BOMB.title": "Unstable Bomb",

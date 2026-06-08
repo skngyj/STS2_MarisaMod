@@ -184,7 +184,7 @@
   "MARISAMOD-SUPER_PERSEIDS.title": "超级英仙座",
   "MARISAMOD-SUPER_PERSEIDS.description": "对随机敌人造成{Damage:diff()}点伤害{Repeat:diff()}次。",
   "MARISAMOD-TREASURE_HUNTER.title": "宝物猎手",
-  "MARISAMOD-TREASURE_HUNTER.description": "造成{Damage:diff()}点伤害。\n[gold]斩杀[/gold]时，如果为精英或首领，本场战斗的奖励增加一个随机[gold]遗物[/gold]。",
+  "MARISAMOD-TREASURE_HUNTER.description": "造成{Damage:diff()}点伤害。\n[gold]斩杀[/gold]时，如果为精英或首领，额外获得一个[gold]遗物[/gold]奖励。",
   "MARISAMOD-ULTRA_SHORT_WAVE.title": "极超短波",
   "MARISAMOD-ULTRA_SHORT_WAVE.description": "获得{Energy:energyIcons()}和{Power:diff()}层[gold]蓄力[/gold]。\n这张牌的能量获得增加1，[gold]蓄力[/gold]获得量增加{PowerInc:diff()}。",
   "MARISAMOD-UNSTABLE_BOMB.title": "不稳定炸弹",
