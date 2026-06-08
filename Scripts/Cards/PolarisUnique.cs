@@ -31,7 +31,7 @@ namespace marisamod.Scripts.Cards
         {
             var card = (await CardSelectCmd.FromHand(choiceContext,
                 Owner,
-                new CardSelectorPrefs(SelectionScreenPrompt, 0, 1),
+                new CardSelectorPrefs(SelectionScreenPrompt, 1, 1),
                 card => card.EnergyCost.Canonical != -1,
                 this)).FirstOrDefault();
             card?.EnergyCost.AddThisCombat(1);
