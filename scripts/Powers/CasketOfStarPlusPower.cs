@@ -1,7 +1,9 @@
 using marisamod.Scripts.Cards.Colorless;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
@@ -12,12 +14,13 @@ namespace marisamod.Scripts.Powers
         public override PowerType Type => PowerType.Buff;
 
         public override PowerStackType StackType => PowerStackType.Counter;
-        
+
         public override async Task AfterBlockGained(Creature creature, decimal amount, ValueProp props,
             CardModel? cardSource)
         {
-            if (amount >= CasketOfStarPower.Threshold && creature == Owner && Owner.Player != null)
+            if (amount >= CasketOfStarPower.Threshold && creature == Owner && Owner.Player != null && _deadlockCounter < CasketOfStarPower.DeadlockLimit)
             {
+                _deadlockCounter++;
                 var sparks = await Spark.CreateInHand(Owner.Player, Amount, CombatState);
                 foreach (var spark in sparks)
                 {
@@ -25,21 +28,33 @@ namespace marisamod.Scripts.Powers
                 }
             }
         }
-        
-        public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
+
+        private int _deadlockCounter = 0;
+
+        public override Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         {
-            foreach (var allCard in Owner.Player!.PlayerCombatState!.AllCards.Where(x => x is Spark))
+            if (cardPlay.Card.Owner == Owner.Player)
             {
-                await CasketOfStarPower.ApplyRetain(allCard);
+                _deadlockCounter = 0;
             }
+
+            return base.AfterCardPlayed(choiceContext, cardPlay);
         }
 
-        public override async Task AfterCardEnteredCombat(CardModel card)
-        {
-            if (card.Owner == Owner.Player && card is Spark)
-            {
-                await CasketOfStarPower.ApplyRetain(card);
-            }
-        }
+        // public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
+        // {
+        //     foreach (var allCard in Owner.Player!.PlayerCombatState!.AllCards.Where(x => x is Spark))
+        //     {
+        //         await CasketOfStarPower.ApplyRetain(allCard);
+        //     }
+        // }
+        //
+        // public override async Task AfterCardEnteredCombat(CardModel card)
+        // {
+        //     if (card.Owner == Owner.Player && card is Spark)
+        //     {
+        //         await CasketOfStarPower.ApplyRetain(card);
+        //     }
+        // }
     }
 }

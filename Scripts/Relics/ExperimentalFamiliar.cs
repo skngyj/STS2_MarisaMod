@@ -22,7 +22,9 @@ public class ExperimentalFamiliar : AbstractMarisaRelic
         if (side == CombatSide.Player)
         {
             Flash();
-            await CardPileCmd.AddGeneratedCardToCombat(combatState.CreateCard<Spark>(Owner), PileType.Hand, Owner);
+            var card = combatState.CreateCard<Spark>(Owner);
+            CardCmd.Upgrade(card);
+            await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner);
         }
     }
 }

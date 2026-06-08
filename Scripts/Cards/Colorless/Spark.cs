@@ -54,7 +54,8 @@ namespace marisamod.Scripts.Cards.Colorless
 
         protected override void OnUpgrade()
         {
-            DynamicVars.Damage.UpgradeValueBy(2m);
+            //DynamicVars.Damage.UpgradeValueBy(2m);
+            AddKeyword(CardKeyword.Retain);
         }
 
         public static async Task<IEnumerable<CardModel>> CreateInHand(Player owner, int count, ICombatState combatState)

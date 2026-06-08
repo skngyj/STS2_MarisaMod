@@ -39,7 +39,7 @@
   "MARISAMOD-BLAZING_STAR.title": "Blazing Star",
   "MARISAMOD-BLAZING_STAR.description": "Deal {Damage:diff()} damage. Add {Cards:diff()} [gold]Burns[/gold] into your [gold]Hand[/gold].\nAmplify {Energy:energyIcons()}: [gold]Stun[/gold] the enemy and [gold]Exhaust[/gold] this card.",
   "MARISAMOD-CASKET_OF_STAR.title": "Casket of Star",
-  "MARISAMOD-CASKET_OF_STAR.description": "[gold]Sparks[/gold] gain [gold]Retain[/gold].\nWhenever you gain 3 or more [gold]Block[/gold], add {IfUpgraded:show:an upgraded|a} [gold]Spark[/gold] into your [gold]Hand[/gold].",
+  "MARISAMOD-CASKET_OF_STAR.description": "Whenever you gain 3 or more [gold]Block[/gold], add {IfUpgraded:show:an upgraded|a} [gold]Spark[/gold] into your [gold]Hand[/gold].",
   "MARISAMOD-CHARGE_UP_SPRAY.title": "Charge-Up Spray",
   "MARISAMOD-CHARGE_UP_SPRAY.description": "Deal {Damage:diff()} damage.\nIf this card consumes [gold]Charge-Up[/gold], gain {Energy:energyIcons()} and draw 2 cards.",
   "MARISAMOD-COLLECTING_QUIRK.title": "Collecting Quirk",
