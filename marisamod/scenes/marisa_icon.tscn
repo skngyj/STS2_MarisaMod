@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bl15w8tqqnw5y"]
 
-[ext_resource type="Texture2D" uid="uid://clbudk7ybcbi4" path="res://marisamod/images/ui/badge.png" id="1_c48nt"]
+[ext_resource type="Texture2D" uid="uid://di4jl15tj38yv" path="res://marisamod/images/Icon.png" id="1_a38rj"]
 
 [node name="IroncladIcon" type="TextureRect"]
 anchors_preset = 15
@@ -9,6 +9,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("1_c48nt")
+texture = ExtResource("1_a38rj")
 expand_mode = 1
 stretch_mode = 5

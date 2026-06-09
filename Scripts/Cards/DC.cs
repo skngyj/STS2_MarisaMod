@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -50,6 +51,9 @@ public class DC : AbstractMarisaCard
         new DamageVar(6, ValueProp.Move),
         new CardsVar(2)
     ];
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        base.ExtraHoverTips.Concat(HoverTipFactory.FromEnchantment<StarlitEnchantment>());
 
     protected override void OnUpgrade()
     {
