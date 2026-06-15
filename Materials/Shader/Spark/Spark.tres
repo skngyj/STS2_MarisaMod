@@ -5,9 +5,6 @@
 [resource]
 resource_local_to_scene = true
 shader = ExtResource("1_x7vvc")
-shader_parameter/ring_radius = 0.05
-shader_parameter/ring_factor = 0.4
-shader_parameter/ring_brightness = 0.03
 shader_parameter/ray_count = 4.0
 shader_parameter/arm_factor = 1.0
 shader_parameter/arm_factor2 = 0.45

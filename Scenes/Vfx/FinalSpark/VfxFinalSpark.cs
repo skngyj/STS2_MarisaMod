@@ -2,6 +2,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Combat;
@@ -70,10 +71,11 @@ public partial class VfxFinalSpark : Node2D
         }else if (Phase == BeamPhase.Fade)
         {
             float progress = (float)Time/FadeTime;
+            progress = Mathf.Clamp(progress, 0.0f, 1.0f);
             Time += delta;
-            StarShader.SetShaderParameter("progress",1.0 - progress/2.0);
+            StarShader.SetShaderParameter("progress",progress+1f);
             BeamShader.SetShaderParameter("progress",1.0 - progress);
-            if (progress >= 1)
+            if (progress >= 2f)
                 this.QueueFreeSafely();
         }
     }
@@ -92,6 +94,7 @@ public partial class VfxFinalSpark : Node2D
         if (baseDamage <= 0) baseDamage = 30;
         if (damage <= 0) damage = 1;
         float scale = Mathf.Clamp( Mathf.Log(damage)/Mathf.Log(baseDamage), 0.5f, 2f);
+        Log.Info($"size: {scale}");
         ApplySize(scale);
     }
     public static VfxFinalSpark? Create(Creature owner, Creature target)
@@ -117,6 +120,8 @@ public partial class VfxFinalSpark : Node2D
             return null;
         }
         VfxFinalSpark instance = GD.Load<PackedScene>(ScenePath).Instantiate<VfxFinalSpark>();
+        instance.StarShader.SetShaderParameter("size",1.0f);
+        instance.BeamShader.SetShaderParameter("size",1.0f);
         float dir = (target - start).Angle();// - MathF.PI / 40f;
         instance.Rotation = dir;
         instance.Position =  start;

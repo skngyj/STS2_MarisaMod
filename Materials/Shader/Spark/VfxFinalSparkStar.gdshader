@@ -4,9 +4,10 @@ render_mode blend_add;
 
 uniform float glow_factor = 4.5;
 
-uniform float progress: hint_range(0.0, 1.0) = 0.0f;
+uniform float progress: hint_range(0.0, 2.0) = 0.0f;
 uniform float size = 1.0;
 
+uniform sampler2D noise_tex;
 void vertex() {
 	//VERTEX *= (0.5+0.5* size);
 }
@@ -32,6 +33,25 @@ vec3 rainbow_uniform(float t) {
     float value = 1.0;
     return value * (rgb * saturation + vec3(1.0 - saturation));
 }
+
+float lineNoise(float start,float speed)//phase的输入应当是正负PI
+{
+	float x = fract(start);
+	//x = mod(x - 0.5 *TIME,1.0);
+	float y =fract(TIME * speed);
+	float noise =texture(noise_tex, vec2(x,y)).r;
+	float noise2 = texture(noise_tex, vec2(mod(x + 0.5,1.0),y)).r;
+	return mix(noise,noise2,0.5);
+}
+vec3 ring(float ring_progress,float angle,float dis,float max_radius,float brightness)
+{
+	vec3 ringColor = norm_col(hsv2rgb(vec3(-TIME + angle/(PI * 2.0),0.7,1)));
+	float ring_radius = max_radius * ring_progress;
+	float ring_sharp =2.0 - 0.1* ring_progress;
+	float ring_brightness = brightness * pow(lineNoise(angle/TAU + 0.4,0.1),6) ;
+	ring_brightness *= 4.0* step(0.0001,ring_progress);
+	return ringColor *  exp(-abs((dis-ring_radius)*ring_sharp) * 50.0)*ring_brightness;
+}
 void fragment()
 {
 	float pulse_period = 1.5;
@@ -42,16 +62,18 @@ void fragment()
     float r = length(uv);//0~1
 
 	float total_spin = PI*1.25;
-	float spin_progress = min(total_spin * progress*2.0,total_spin) ;//期望在后半段不旋转
+	float spin_progress = min(total_spin * progress,total_spin) ;//期望在后半段不旋转
     float angle = atan(uv.y, uv.x) +spin_progress;
     float sector = 6.28318 / 4.0;
     float a = mod(angle + sector * 0.5, sector) - sector * 0.5;
     // 旋转到标准方向
     vec2 p = vec2(cos(a), sin(a)) * r;
     // 星芒参数
-	float factor3 = 14.0- 7.0 *progress;
-	float factor2 = 0.1+ 0.25 * pow(abs(progress-0.5)*2.0,0.4) + 0.15 * progress;
-	float factor = -0.8+  1.8* progress;// progress*0.5 +  0.5;
+	float star_progress = min(1.0,progress);
+	star_progress -=abs(0.5*max(0.0,progress-1.0));
+	float factor3 = 14.0-7.0*star_progress*star_progress*star_progress*star_progress;
+	float factor2 = 0.1+ 0.25 * pow(abs(star_progress-0.5)*2.0,0.4) + 0.15 * star_progress;
+	float factor = -0.8+  1.8* star_progress;// progress*0.5 +  0.5;
 	factor *= pow(pulse,0.3);
 	factor2 *= sqrt(pulse);
 	factor3 *= pulse;
@@ -65,17 +87,13 @@ void fragment()
 	vec3 colorRGB = norm_col(hsv2rgb(hsv));
 	vec3 color = colorRGB * rays;
 
-	float ring_radius = 0.08;
-	float ring_sharp = 1.5;//越大就越尖锐越薄
-	float ring_brightness = 0.1;
-
-	ring_radius *= 0.6 + 0.4 * 2.0 * abs(progress-0.5);
-	ring_radius /= pow(pulse, 2);
-	ring_sharp *=0.4 + 0.4* pow(abs(progress-0.4)*2.0,2.0);
-	ring_sharp *= pow(pulse,0.5);
-	ring_brightness *=  (0.4 + 0.6* progress);
-	float ring = exp(-abs((r-ring_radius)*ring_sharp) * 50.0)*ring_brightness;
-
-	color +=  colorRGB * ring;
+	float ring_progress = 2.5*max(progress - 0.6,0.0);
+	float ring_brightness = min(1.0,2.0-progress);
+	color +=  ring(ring_progress,angle,r,0.06,ring_brightness);
+	float ring_progress2 =  min(1.0,ring_progress*1.1);
+	float ring2_brightness = clamp(1.0-ring_progress2,0.0,0.9) ;
+	ring2_brightness = pow(ring2_brightness , 0.5);
+	color +=  ring(ring_progress2,-angle + 0.5,r,0.2,ring2_brightness);
+	
     COLOR = vec4(color, 1.0);
 }
