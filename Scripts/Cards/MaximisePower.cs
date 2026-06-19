@@ -21,7 +21,8 @@ namespace marisamod.Scripts.Cards
 
         protected override IEnumerable<DynamicVar> CanonicalVars =>
         [
-            new EnergyVar(1)
+            new EnergyVar(1),
+            new DynamicVar("Pow", 1)
         ];
 
         public override IEnumerable<CardKeyword> CanonicalKeywords => base.CanonicalKeywords.Concat([
@@ -44,7 +45,7 @@ namespace marisamod.Scripts.Cards
                 await PlayerCmd.GainEnergy(gain, Owner);
             }
 
-            await PowerCmd.Apply<MaximisePowerPower>(choiceContext, Owner.Creature, 1m, Owner.Creature, this);
+            await PowerCmd.Apply<MaximisePowerPower>(choiceContext, Owner.Creature, DynamicVars["Pow"].BaseValue, Owner.Creature, this);
             await CardPileCmd.AddGeneratedCardToCombat(CombatState!.CreateCard<Exhaustion>(Owner), PileType.Hand, Owner);
         }
     }

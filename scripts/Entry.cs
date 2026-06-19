@@ -361,39 +361,39 @@ public class Entry
     //     }
     // }
 
-    [HarmonyPatch(typeof(RunManager))]
-    public static class RichPresencePatch
-    {
-        private static readonly Lazy<MethodInfo?> SteamSetRichPresence = new(() =>
-        {
-            var t = AccessTools.TypeByName("Steamworks.SteamFriends");
-            return t == null ? null : AccessTools.Method(t, "SetRichPresence", [typeof(string), typeof(string)]);
-        });
-
-        private static readonly Lazy<PropertyInfo?> StateProp = new(() =>
-            AccessTools.DeclaredProperty(typeof(RunManager), "State"));
-
-        [HarmonyPostfix]
-        [HarmonyPatch("UpdateRichPresence")]
-        public static void UpdateRichPresence_Postfix(RunManager? __instance)
-        {
-            if (__instance == null) return;
-            var State = StateProp.Value?.GetValue(__instance) as RunState;
-            if (!TestMode.IsOn && State != null)
-            {
-                var player = LocalContext.GetMe(State);
-                if (player != null)
-                {
-                    var character = player.Character;
-                    if (character is MarisaCharacter)
-                    {
-                        SteamSetRichPresence.Value?.Invoke(null, ["Character", "DEFECT"]);
-                        SteamSetRichPresence.Value?.Invoke(null, ["Ascension", "Marisa - A" + State.AscensionLevel]);
-                    }
-                }
-            }
-        }
-    }
+    // [HarmonyPatch(typeof(RunManager))]
+    // public static class RichPresencePatch
+    // {
+    //     private static readonly Lazy<MethodInfo?> SteamSetRichPresence = new(() =>
+    //     {
+    //         var t = AccessTools.TypeByName("Steamworks.SteamFriends");
+    //         return t == null ? null : AccessTools.Method(t, "SetRichPresence", [typeof(string), typeof(string)]);
+    //     });
+    //
+    //     private static readonly Lazy<PropertyInfo?> StateProp = new(() =>
+    //         AccessTools.DeclaredProperty(typeof(RunManager), "State"));
+    //
+    //     [HarmonyPostfix]
+    //     [HarmonyPatch("UpdateRichPresence")]
+    //     public static void UpdateRichPresence_Postfix(RunManager? __instance)
+    //     {
+    //         if (__instance == null) return;
+    //         var State = StateProp.Value?.GetValue(__instance) as RunState;
+    //         if (!TestMode.IsOn && State != null)
+    //         {
+    //             var player = LocalContext.GetMe(State);
+    //             if (player != null)
+    //             {
+    //                 var character = player.Character;
+    //                 if (character is MarisaCharacter)
+    //                 {
+    //                     SteamSetRichPresence.Value?.Invoke(null, ["Character", "DEFECT"]);
+    //                     SteamSetRichPresence.Value?.Invoke(null, ["Ascension", "Marisa - A" + State.AscensionLevel]);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     [HarmonyPatch(typeof(TrashHeap),"Relics",MethodType.Getter)]
     public static class TrashHeapRelicPatch

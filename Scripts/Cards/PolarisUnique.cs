@@ -16,14 +16,16 @@ namespace marisamod.Scripts.Cards
 
         protected override IEnumerable<DynamicVar> CanonicalVars =>
         [
-            new EnergyVar(2)
+            new EnergyVar(1),
+            new CardsVar(1)
         ];
 
         protected override void OnUpgrade()
         {
-            DynamicVars.Energy.UpgradeValueBy(1);
+            //DynamicVars.Energy.UpgradeValueBy(1);
+            DynamicVars.Cards.UpgradeValueBy(1);
         }
-        
+
         protected override bool IsPlayable =>
             !CombatManager.Instance.History.CardPlaysFinished.Any(e => e.HappenedThisTurn(CombatState) && e.CardPlay.Card is PolarisUnique && e.CardPlay.Card.Owner == Owner);
 
@@ -38,6 +40,7 @@ namespace marisamod.Scripts.Cards
             await PlayerCmd.GainEnergy(DynamicVars.Energy.IntValue, Owner);
             //EnergyCost.AddThisCombat(1);
             // await PowerCmd.Apply<PolarisUniquePower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
+            await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, Owner);
         }
     }
 }
