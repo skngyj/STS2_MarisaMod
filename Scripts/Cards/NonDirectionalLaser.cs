@@ -36,6 +36,8 @@ namespace marisamod.Scripts.Cards
             //     .Execute(choiceContext);
         }
 
+        protected override bool ShouldGlowGoldInternal => _hasGeneratedCard;
+
         private bool _hasGeneratedCard;
 
         public override Task AfterCardGeneratedForCombat(CardModel card, Player? creator)
