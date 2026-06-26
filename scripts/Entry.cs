@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
@@ -342,11 +343,21 @@ public class Entry
         }
     }
     
-    // [HarmonyPatch(typeof(CombatManager), nameof(NCard.UpdateVisuals))]
-    // internal static class RefreshAmplifyPatch
-    // {
-    //     
-    // }
+    [HarmonyPatch(typeof(ActionExecutor), "AfterActionFinished")]
+    internal static class RefreshAmplifyPatch
+    {
+        private static bool Prefix(ActionExecutor __instance)
+        {
+
+            return true;
+        }
+        
+    }
+
+    public static void RefreshAmplifyState()
+    {
+        
+    }
 
     // [HarmonyPatch(typeof(RunManager), "UpdateRichPresence")]
     // internal static class RunManagerUpdateRichPresencePatch
