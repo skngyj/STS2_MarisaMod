@@ -35,7 +35,7 @@ void fragment()
 
     vec2 uv = (UV - 0.5) * 2.0;
     float r = length(uv);//0~1
-	//r +=0.005;
+	//r +=0.01;
     float angle = atan(uv.y, uv.x);
     float sector = 6.28318 / ray_count;
     float a = mod(angle + sector * 0.5, sector) - sector * 0.5;
@@ -49,5 +49,9 @@ void fragment()
 	vec3 hsv = vec3(TIME/ pulse_period/2.0 + angle/(PI * 2.0),Saturation,1);//此处的亮度设置没有意义，后面会对亮度归一化
 	vec3 color = norm_col(hsv2rgb(hsv));
 	color = color * rays;
+	color.x = min(color.x,1.0);
+	color.y = min(color.y,1.0);
+	color.z = min(color.z,1.0);
+	//color *= 0.5;
     COLOR = vec4(color, 1.0);
 }

@@ -9,7 +9,7 @@ namespace marisamod.Scripts.Enchantments;
 
 public class StarlitEnchantment : AbstractMarisaEnchantment
 {
-    public int AmplifyCost = 0;
+    //public int AmplifyCost = 0;
     private const int SingleGainCeiling = 9999;
 
     public override bool CanEnchant(CardModel card)
@@ -17,6 +17,7 @@ public class StarlitEnchantment : AbstractMarisaEnchantment
         return card.Enchantment == null && !card.Keywords.Contains(CardKeyword.Unplayable);
     }
 
+    /*
     public override Task BeforeCardPlayed(CardPlay cardPlay)
     {
         if (cardPlay.Card == Card)
@@ -26,10 +27,10 @@ public class StarlitEnchantment : AbstractMarisaEnchantment
 
         return Task.CompletedTask;
     }
-
+*/
     public override async Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
     {
-        var amt = AmplifyCost + cardPlay.Resources.EnergySpent;
+        var amt = cardPlay.Resources.EnergySpent;//+AmplifyCost
         var amtFin = Mathf.RoundToInt(Mathf.Pow(2, amt));
         if (amtFin > SingleGainCeiling)
             amtFin = SingleGainCeiling;

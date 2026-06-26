@@ -1,3 +1,4 @@
+using Godot;
 using marisamod.Scripts.Enchantments;
 using marisamod.Scripts.PatchesNModels;
 using marisamod.Scripts.Powers;
@@ -6,7 +7,12 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
 
 namespace marisamod.Scripts.Cards
 {
@@ -20,9 +26,53 @@ namespace marisamod.Scripts.Cards
         public int KickerCost { get; } = kickerCost;
 
         //public bool IsAmplified { get; protected set; }
-        public bool AmplifiedInPreview;
+        public bool AmplifiedInPreview{
+            get
+            {
+                if (RunState == null)
+                    return false;
+                if (Owner.PlayerCombatState == null) return false;
+                switch (Pile)
+                {
+                    //if (Owner.PlayerCombatState.Hand.Cards.Contains(this))
+                    case { Type: PileType.Hand } when Owner.Creature.HasPower<OneTimeOffPower>():
+                        //SetAmplifyState(false, false);
+                        return false;
+                        break;
+                    case { Type: PileType.Hand } when Owner.Creature.HasPower<MillisecondPulsarsPower>() ||
+                                                      Owner.Creature.HasPower<PulseMagicPower>():
+                        //SetAmplifyState(true, true);
+                        return true;
+                        break;
+                    case { Type: PileType.Hand } when Owner.PlayerCombatState.Energy < EnergyCost.GetWithModifiers(CostModifiers.All):
+                        //SetAmplifyState(false, false);
+                        return false;
+                        break;
+                    case { Type: PileType.Hand }:
+                    {
+                        if (Owner.PlayerCombatState.Energy >=
+                            EnergyCost.GetWithModifiers(CostModifiers.All) + KickerCost)
+                        {
+                            //SetAmplifyState(true, false);
+                            return true;
+                        }
+
+                        break;
+                    }
+                    case { Type: PileType.Discard or PileType.Draw or PileType.Exhaust }:
+                        //SetAmplifyState(false, false);
+                        return false;
+                        break;
+                }
+
+                return false;
+            }
+        }
 
         public bool AmplifiedInPlay;
+
+        public bool PaidAmplifiedCost;
+        public static readonly Color AmplifiedGlowColor = new Color("5244ff");
 
         //private bool _costModifiedForAmplify;
 
@@ -37,43 +87,58 @@ namespace marisamod.Scripts.Cards
         [
             MarisaCardKeyWords.Amplify
         ];
-
-        protected override bool ShouldGlowGoldInternal => AmplifiedInPreview; //IsAmplified;
-
+        
         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         {
-            AmplifiedInPlay = false;
-            if (Owner.Creature.HasPower<OneTimeOffPower>())
-            {
-                return;
-            }
-
-            if (cardPlay.IsAutoPlay || Owner.Creature.HasPower<MillisecondPulsarsPower>() ||
-                Owner.Creature.HasPower<PulseMagicPower>())
-            {
-                AmplifiedInPlay = true;
-            }
-            else if (Owner.PlayerCombatState?.Energy >= KickerCost)
-            {
-                AmplifiedInPlay = true;
-                if (KickerCost > 0)
-                {
-                    if (Enchantment is StarlitEnchantment enchantment)
-                    {
-                        enchantment.AmplifyCost = DynamicVars.Energy.IntValue;
-                    }
-
-                    await PlayerCmd.LoseEnergy(DynamicVars.Energy.BaseValue, Owner);
-                }
-            }
+            AmplifiedInPlay = PaidAmplifiedCost;
+            if (cardPlay.IsAutoPlay) AmplifiedInPlay = true;
         }
 
+        public void CalculateAmplifiedCost(ref int baseCost)
+        {
+            PaidAmplifiedCost = GetAmplifiedCost(ref baseCost);
+        }
+        private bool GetAmplifiedCost( ref int cost)
+        {
+            if (Owner.Creature.HasPower<OneTimeOffPower>())return false;
+            if (Owner.Creature.HasPower<MillisecondPulsarsPower>() ||
+                Owner.Creature.HasPower<PulseMagicPower>())
+                return true;
+            var costWithAmp = cost + kickerCost; 
+            if ((Owner.PlayerCombatState?.Energy < costWithAmp ))return false;  
+            cost = costWithAmp ;
+            return true;
+        }
+        
         // public override IEnumerable<CardKeyword> CanonicalKeywords => [
         //     MarisaCardKeyWords.Amplify
         // ];
 
+        /*
+                 public readonly Color AmplifiedColor = new Color(1,0,1);
+        
+        public void SetNCardHighlight(bool highlight)
+        {
+            NCard? nCard = NCombatRoom.Instance?.Ui.Hand.GetCard(this);
+            if (nCard == null) Log.Info($"no ncard");
+            NCardHighlight? nCardHighlight = nCard.CardHighlight;
+            if (nCardHighlight == null)
+            {
+                Log.Info($"no NCardHighlight");
+                return;
+            }
+            if (!CanPlay())
+            {
+                nCardHighlight.AnimHide();
+                return;
+            }
+            var color = highlight ? AmplifiedColor : NCardHighlight.playableColor;
+            nCardHighlight.Modulate = color;
+            Log.Info($"Set Color {color}");
+        }
         public virtual void ValidateAmplify()
         {
+            bool oldAmplifiedInPreview = AmplifiedInPreview;
             if (RunState == null)
                 return;
             if (Owner.PlayerCombatState == null) return;
@@ -109,8 +174,14 @@ namespace marisamod.Scripts.Cards
                     AmplifiedInPreview = false;
                     break;
             }
-        }
 
+            if (oldAmplifiedInPreview != AmplifiedInPreview)
+            {
+                //Log.Info($"Change ValidateAmplify:{AmplifiedInPreview}");
+                SetNCardHighlight(AmplifiedInPreview);
+            }
+        }
+        */
         // private void SetAmplifyState(bool isAmplified, bool costFree)
         // {
         //     AmplifiedInPreview = isAmplified;
@@ -128,26 +199,29 @@ namespace marisamod.Scripts.Cards
         //     // }
         // }
 
+        /*
         public override Task AfterCardEnteredCombat(CardModel card)
         {
             if (card == this)
                 ValidateAmplify();
             return Task.CompletedTask;
         }
-
+*/
         public override Task AfterCardPlayed(PlayerChoiceContext context, CardPlay cardPlay)
         {
-            ValidateAmplify();
+            //ValidateAmplify();
+            if (cardPlay.Card == this && cardPlay.IsLastInSeries) PaidAmplifiedCost = false;
             return Task.CompletedTask;
         }
 
+        /*
         public override Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
         {
             if (card == this)
                 ValidateAmplify();
             return Task.CompletedTask;
         }
-
+*/
         // public override Task AfterEnergyReset(Player player)
         // {
         //     ValidateAmplify();

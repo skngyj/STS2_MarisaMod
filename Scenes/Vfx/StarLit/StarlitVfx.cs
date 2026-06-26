@@ -1,4 +1,5 @@
 using Godot;
+using marisamod.Scripts.Powers;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Cards;
@@ -23,30 +24,33 @@ public partial class StarlitVfx : Node2D
     
     private GpuParticles2D? _particle;
     public GpuParticles2D Particle => _particle ??= GetNode<GpuParticles2D>("particle");
+    private GpuParticles2D? _explodeParticle;
+    public GpuParticles2D ExplodeParticle => _explodeParticle ??= GetNode<GpuParticles2D>("explode");
     #endregion
     
     #region 公开属性
     public Vector2 Velocity = Vector2.Zero;
-    public NCreature? PlayerOwner; 
-    public Vector2? Target; 
+    public NCreature? NCreatureOwner;
+    public StarlitPower PowerOwner;
     #endregion
     #region 
     private float _startSpeed;
     private float _orbitPhase = Mathf.Tau;
-    private float _orbitSpeed = 1f;
+    private float _orbitSpeed = 0.7f;
     private float _ellipseRotation = Mathf.Tau;
-    private float _ellipseRotationSpeed = 0.2f;
+    private float _ellipseRotationSpeed = 0.13f;
     private float _majorRadius;
     private float _minorRadius;
     private bool _exploding = false;
     private float _explodTime = 0f;
+    private bool _killAfterExplode = false;
     #endregion
     private void UpdateWandering(float delta)
     {
-        if (PlayerOwner == null)
+        if (NCreatureOwner == null)
             return;
 
-        Vector2 center = PlayerOwner.VfxSpawnPosition;
+        Vector2 center = NCreatureOwner.Hitbox.GlobalPosition + NCreatureOwner.Hitbox.Size / 2f + new Vector2(0,-50);
 
         _orbitPhase += _orbitSpeed * delta;
         _ellipseRotation += _ellipseRotationSpeed * delta;
@@ -80,31 +84,49 @@ public partial class StarlitVfx : Node2D
         }
         Position += Velocity * delta;
     }
-    public void StartExplosion()
+    public void StartExplosion(bool killAfterExplode = false)
     {
         _exploding = true;
+        _explodTime = 0f;
+        ExplodeParticle.Emitting = true;
+        RingShader.SetShaderParameter("power", 1.0f);
+        //ExplodeParticle.Restart();
+        _killAfterExplode = killAfterExplode;
+        if (killAfterExplode)
+        {
+            Particle.Emitting = false;
+            Star.Visible = false;
+        }
     }
     public override void _Process(double delta)
     {
         if (_exploding)
         {
             _explodTime += (float)delta;
-            if (_explodTime > 1f) Kill();
+            Ring.Scale *= 1.1f;
+            RingShader.SetShaderParameter("power", 1.0f - _explodTime);
+            if (!(_explodTime > 1.0f)) return;
+            if (_killAfterExplode)
+            {
+                this.QueueFreeSafely();
+            }
+            else
+            {
+                _exploding = false;
+                PowerOwner.UpdateVfx();
+                Ring.Scale = new Vector2(1, 1);
+            }
+
         }
         else
         {
             UpdateWandering((float)delta);
         }
     }
-    public void Kill()
+    
+    public void ApplySize(int starliCount)
     {
-        if (PlayerOwner != null)
-            Instances.Remove(PlayerOwner);
-        this.QueueFreeSafely();
-    }
-    public void ApplySize(int size)
-    {
-        size = Mathf.Clamp(size, 1, 256);
+        int size = Mathf.Clamp(starliCount, 1, 256);
         var logRatio = Mathf.Log(size) / Mathf.Log(2) / 8.0f;
         var scale = 3f + 3f * logRatio;
         Scale = new Vector2(scale, scale);
@@ -114,7 +136,7 @@ public partial class StarlitVfx : Node2D
         Particle.AmountRatio = 0.2f + 0.8f* logRatio;
     }
 
-    public void VelocityInit()
+    public void MovementInit()
     {
         Vector2 containerSize = NCombatRoom.Instance?.CombatVfxContainer.Size ?? new Vector2(1,640);
         float baseScale = containerSize.Y;
@@ -130,43 +152,31 @@ public partial class StarlitVfx : Node2D
         _minorRadius = baseScale * 0.1f*(float)GD.RandRange(0.8f, 1f);
         _orbitPhase *= GD.Randf();
         _ellipseRotation *= GD.Randf();
-        _orbitSpeed = (float)GD.RandRange(1.4f, 1.8f);
+        _orbitSpeed = (float)GD.RandRange(0.7f, 1.4f);
         _ellipseRotationSpeed = (float)GD.RandRange(0.1f, 0.3f);
         if (GD.Randf() < 0.5f)
             _ellipseRotationSpeed *= -1;
     }
-
-    private static readonly Dictionary<NCreature, StarlitVfx> Instances = new ();
-
-    public static StarlitVfx? GetInstance(NCreature? player)
-    {
-        if (player == null) return null;
-        if (Instances.TryGetValue(player, out var instance))
-        {
-            if (IsInstanceValid(instance))
-                return instance;
-            else
-                Instances.Remove(player);
-        }
-        
-        var newVfx = Create(player);
-        
-        Instances.Add(player,newVfx);
-        return newVfx;
-    }
-    public static StarlitVfx Create()
+    
+    public static StarlitVfx Create(bool darkVersion = false)
     {
         var instance = GD.Load<PackedScene>(ScenePath)
             .Instantiate<StarlitVfx>();
+        //if (darkVersion)instance.Particle.Material = 
         return instance;
     }
-    public static StarlitVfx Create(NCreature player)
+    public static StarlitVfx Create(StarlitPower powerOwner,bool darkVersion = false)
     {
-        StarlitVfx vfx = Create();
-        vfx.Position = player.VfxSpawnPosition;
-        vfx.PlayerOwner= player;
+        StarlitVfx vfx = Create(darkVersion);
+        //vfx.Position = ownerCreature.Hitbox.GlobalPosition + ownerCreature.Hitbox.Size / 2f + new Vector2(0,-10);
+        vfx.PowerOwner = powerOwner;
+        var owner = powerOwner.Owner.GetCreatureNode();
+        if (owner == null) return vfx;
+        vfx.Position = owner.VfxSpawnPosition;
+        vfx.NCreatureOwner = owner;
         NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(vfx);
-        vfx.VelocityInit();
+        vfx.MovementInit();
         return vfx;
     }
 }
+
