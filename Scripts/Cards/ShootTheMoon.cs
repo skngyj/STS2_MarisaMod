@@ -23,7 +23,7 @@ public class ShootTheMoon : AbstractAmplifiedCard
         // new CalculationBaseVar(8m),
         // new ExtraDamageVar(5m),
         // new CalculatedDamageVar(ValueProp.Move).WithMultiplier((card, _) => card is AbstractAmplifiedCard { IsAmplified: true } ? 1 : 0)
-        new DamageVar(8, ValueProp.Move),
+        new DamageVar(12, ValueProp.Move),
         new DamageVar("DamageAmplified", 12, ValueProp.Move)
     ]);
 
@@ -31,8 +31,8 @@ public class ShootTheMoon : AbstractAmplifiedCard
     {
         // DynamicVars.CalculationBase.UpgradeValueBy(3);
         // DynamicVars.ExtraDamage.UpgradeValueBy(2);
-        DynamicVars.Damage.UpgradeValueBy(3);
-        DynamicVars["DamageAmplified"].UpgradeValueBy(5);
+        DynamicVars.Damage.UpgradeValueBy(4);
+        DynamicVars["DamageAmplified"].UpgradeValueBy(4);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -44,11 +44,11 @@ public class ShootTheMoon : AbstractAmplifiedCard
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(choiceContext);
 
-        if (Owner.RunState.CurrentRoom!.RoomType != MegaCrit.Sts2.Core.Rooms.RoomType.Boss)
+        if (Owner.RunState.CurrentRoom!.RoomType != MegaCrit.Sts2.Core.Rooms.RoomType.Boss && AmplifiedInPlay)
         {
             var pows = cardPlay.Target.Powers.Where(p => p.TypeForCurrentAmount == PowerType.Buff && p is not ReattachPower).ToList();
 
-            if (AmplifiedInPlay)
+            if (IsUpgraded)
             {
                 foreach (var pow in pows)
                 {

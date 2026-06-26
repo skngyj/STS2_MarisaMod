@@ -12,11 +12,13 @@ using marisamod.Scripts.Relics;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
@@ -437,39 +439,39 @@ public class Entry
     //     }
     // }
 
-    [HarmonyPatch(typeof(RunManager))]
-    public static class RichPresencePatch
-    {
-        private static readonly Lazy<MethodInfo?> SteamSetRichPresence = new(() =>
-        {
-            var t = AccessTools.TypeByName("Steamworks.SteamFriends");
-            return t == null ? null : AccessTools.Method(t, "SetRichPresence", [typeof(string), typeof(string)]);
-        });
-
-        private static readonly Lazy<PropertyInfo?> StateProp = new(() =>
-            AccessTools.DeclaredProperty(typeof(RunManager), "State"));
-
-        [HarmonyPostfix]
-        [HarmonyPatch("UpdateRichPresence")]
-        public static void UpdateRichPresence_Postfix(RunManager? __instance)
-        {
-            if (__instance == null) return;
-            var State = StateProp.Value?.GetValue(__instance) as RunState;
-            if (!TestMode.IsOn && State != null)
-            {
-                var player = LocalContext.GetMe(State);
-                if (player != null)
-                {
-                    var character = player.Character;
-                    if (character is MarisaCharacter)
-                    {
-                        SteamSetRichPresence.Value?.Invoke(null, ["Character", "DEFECT"]);
-                        SteamSetRichPresence.Value?.Invoke(null, ["Ascension", "Marisa - A" + State.AscensionLevel]);
-                    }
-                }
-            }
-        }
-    }
+    // [HarmonyPatch(typeof(RunManager))]
+    // public static class RichPresencePatch
+    // {
+    //     private static readonly Lazy<MethodInfo?> SteamSetRichPresence = new(() =>
+    //     {
+    //         var t = AccessTools.TypeByName("Steamworks.SteamFriends");
+    //         return t == null ? null : AccessTools.Method(t, "SetRichPresence", [typeof(string), typeof(string)]);
+    //     });
+    //
+    //     private static readonly Lazy<PropertyInfo?> StateProp = new(() =>
+    //         AccessTools.DeclaredProperty(typeof(RunManager), "State"));
+    //
+    //     [HarmonyPostfix]
+    //     [HarmonyPatch("UpdateRichPresence")]
+    //     public static void UpdateRichPresence_Postfix(RunManager? __instance)
+    //     {
+    //         if (__instance == null) return;
+    //         var State = StateProp.Value?.GetValue(__instance) as RunState;
+    //         if (!TestMode.IsOn && State != null)
+    //         {
+    //             var player = LocalContext.GetMe(State);
+    //             if (player != null)
+    //             {
+    //                 var character = player.Character;
+    //                 if (character is MarisaCharacter)
+    //                 {
+    //                     SteamSetRichPresence.Value?.Invoke(null, ["Character", "DEFECT"]);
+    //                     SteamSetRichPresence.Value?.Invoke(null, ["Ascension", "Marisa - A" + State.AscensionLevel]);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     [HarmonyPatch(typeof(TrashHeap),"Relics",MethodType.Getter)]
     public static class TrashHeapRelicPatch

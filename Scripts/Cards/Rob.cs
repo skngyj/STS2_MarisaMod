@@ -9,7 +9,7 @@ namespace marisamod.Scripts.Cards
 {
     public class Rob : AbstractAmplifiedCard
     {
-        public Rob() : base(1, 1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+        public Rob() : base(1, 1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
         {
         }
 
@@ -32,7 +32,7 @@ namespace marisamod.Scripts.Cards
         //     new CalculatedDamageVar(ValueProp.Move).WithMultiplier((card, _) => card is AbstractAmplifiedCard { IsAmplified: true } ? 1 : 0)
         // ]);
         protected override IEnumerable<DynamicVar> CanonicalVars => base.CanonicalVars.Concat([
-            new DamageVar(7, ValueProp.Move)
+            new DamageVar(9, ValueProp.Move)
         ]);
 
         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

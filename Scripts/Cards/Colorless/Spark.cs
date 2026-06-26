@@ -54,7 +54,7 @@ namespace marisamod.Scripts.Cards.Colorless
 
         protected override void OnUpgrade()
         {
-            //DynamicVars.Damage.UpgradeValueBy(2m);
+            DynamicVars.Damage.UpgradeValueBy(1m);
             AddKeyword(CardKeyword.Retain);
         }
 

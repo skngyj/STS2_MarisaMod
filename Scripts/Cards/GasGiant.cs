@@ -9,7 +9,7 @@ namespace marisamod.Scripts.Cards;
 
 public class GasGiant : AbstractMarisaCard
 {
-    public GasGiant() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+    public GasGiant() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
     {
     }
     
