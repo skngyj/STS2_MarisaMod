@@ -72,6 +72,7 @@ public partial class StarlitVfx : Node2D
             0.85f * _startSpeed,
             Mathf.Clamp(dist / 80f, 0f, 1f)
         );
+        if (_exploding) desiredSpeed *= 0.15f;
         if (toTarget.Length() <= desiredSpeed)
         {
             Velocity = toTarget;
@@ -100,27 +101,21 @@ public partial class StarlitVfx : Node2D
     }
     public override void _Process(double delta)
     {
-        if (_exploding)
+        UpdateWandering((float)delta);
+        if (!_exploding) return;
+        _explodTime += (float)delta;
+        Ring.Scale *= 1.1f;
+        RingShader.SetShaderParameter("power", 1.0f - _explodTime);
+        if (!(_explodTime > 1.0f)) return;
+        if (_killAfterExplode)
         {
-            _explodTime += (float)delta;
-            Ring.Scale *= 1.1f;
-            RingShader.SetShaderParameter("power", 1.0f - _explodTime);
-            if (!(_explodTime > 1.0f)) return;
-            if (_killAfterExplode)
-            {
-                this.QueueFreeSafely();
-            }
-            else
-            {
-                _exploding = false;
-                PowerOwner.UpdateVfx();
-                Ring.Scale = new Vector2(1, 1);
-            }
-
+            this.QueueFreeSafely();
         }
         else
         {
-            UpdateWandering((float)delta);
+            _exploding = false;
+            PowerOwner.UpdateVfx();
+            Ring.Scale = new Vector2(1, 1);
         }
     }
     
