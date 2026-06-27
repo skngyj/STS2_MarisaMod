@@ -14,7 +14,7 @@ public class BuffBlockerPower : AbstractMarisaPower
 
     public override decimal ModifyPowerAmountGivenMultiplicative(PowerModel power, Creature giver, decimal amount, Creature? target, CardModel? cardSource)
     {
-        if (power.TypeForCurrentAmount == PowerType.Buff && target == Owner)
+        if (power.GetTypeForAmount(amount) == PowerType.Buff && target == Owner)
         {
             return 0;
         }
