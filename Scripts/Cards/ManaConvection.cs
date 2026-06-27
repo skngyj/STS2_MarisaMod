@@ -33,7 +33,8 @@ namespace marisamod.Scripts.Cards
 
         protected override void OnUpgrade()
         {
-            DynamicVars.Cards.UpgradeValueBy(1);
+            //DynamicVars.Cards.UpgradeValueBy(1);
+            EnergyCost.UpgradeBy(-1);
         }
 
         protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -46,7 +46,8 @@ namespace marisamod.Scripts.Cards
             }
 
             await PowerCmd.Apply<MaximisePowerPower>(choiceContext, Owner.Creature, DynamicVars["Pow"].BaseValue, Owner.Creature, this);
-            await CardPileCmd.AddGeneratedCardToCombat(CombatState!.CreateCard<Exhaustion>(Owner), PileType.Hand, Owner);
+            await PowerCmd.Apply<BuffBlockerPower>(choiceContext, Owner.Creature, DynamicVars["Pow"].BaseValue, Owner.Creature, this);
+            //await CardPileCmd.AddGeneratedCardToCombat(CombatState!.CreateCard<Exhaustion>(Owner), PileType.Hand, Owner);
         }
     }
 }

@@ -34,12 +34,14 @@ public class MagicChant : AbstractMarisaCard
             orderby c.Rarity, c.Id
             select c).ToList();
         var cardModel = (await CardSelectCmd.FromSimpleGrid(choiceContext, cardsIn, Owner, prefs)).FirstOrDefault();
-        var enchant = ModelDb.Enchantment<StarlitEnchantment>().ToMutable();
+        // var enchant = ModelDb.Enchantment<StarlitEnchantment>().ToMutable();
         if (cardModel != null)
         {
-            if (enchant.CanEnchant(cardModel))
-                //MarisaCharacter.Enchant(enchant, cardModel);
-                CardCmd.Enchant(enchant, cardModel, 1);
+            // if (enchant.CanEnchant(cardModel))
+            //     //MarisaCharacter.Enchant(enchant, cardModel);
+            //     CardCmd.Enchant(enchant, cardModel, 1);
+            if (cardModel.IsUpgradable)
+                CardCmd.Upgrade(cardModel);
             await CardPileCmd.Add(cardModel, PileType.Hand);
         }
     }

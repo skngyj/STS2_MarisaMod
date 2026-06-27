@@ -18,7 +18,7 @@ namespace marisamod.Scripts.Powers
 
         protected override IEnumerable<DynamicVar> CanonicalVars =>
         [
-            new DynamicVar("Mult", 50m)
+            new DynamicVar("Mult", 200)
         ];
 
         public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
@@ -38,14 +38,16 @@ namespace marisamod.Scripts.Powers
                 return 1m;
             }
 
-            return (decimal)MathF.Pow(1.5f, Amount);
+            //return (decimal)MathF.Pow(1.5f, Amount);
+            return (decimal)MathF.Pow(2, Amount);
         }
 
         public override Task AfterPowerAmountChanged(PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
         {
             if (power == this)
             {
-                DynamicVars["Mult"].BaseValue = (decimal)MathF.Pow(1.5f, Amount) * 100;
+                //DynamicVars["Mult"].BaseValue = (decimal)MathF.Pow(1.5f, Amount) * 100;
+                DynamicVars["Mult"].BaseValue = (decimal)MathF.Pow(2f, Amount) * 100;
             }
 
             return Task.CompletedTask;
@@ -53,7 +55,7 @@ namespace marisamod.Scripts.Powers
 
         public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
         {
-            if (side == CombatSide.Player)
+            if (side == Owner.Side)
             {
                 await PowerCmd.Remove(this);
             }
