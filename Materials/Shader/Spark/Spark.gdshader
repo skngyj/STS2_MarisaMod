@@ -1,10 +1,6 @@
 shader_type canvas_item;
 render_mode blend_add;
 //render_mode blend_sub;
-//光环
-uniform float ring_radius = 0.05;
-uniform float ring_factor = 0.4;//越大就越尖锐越薄
-uniform float ring_brightness = 0.03;
 
 //星芒
 uniform float ray_count = 4.0;
@@ -39,6 +35,7 @@ void fragment()
 
     vec2 uv = (UV - 0.5) * 2.0;
     float r = length(uv);//0~1
+	//r +=0.01;
     float angle = atan(uv.y, uv.x);
     float sector = 6.28318 / ray_count;
     float a = mod(angle + sector * 0.5, sector) - sector * 0.5;
@@ -47,12 +44,14 @@ void fragment()
     // 非各向同性距离
     float d = (pow(abs(p.x),arm_factor2) + pulse * arm_factor* pow(abs(p.y),arm_factor2))/ (arm_factor* (1.0+pulse_amplitude)) ;
     float rays = pow(1.0 / (d * 8.0 + 0.02), glow_factor);
-    // 光环
-    float ring = exp(-abs((r-ring_radius*pulse)*ring_factor*pulse) * 50.0)*ring_brightness;
 
     //vec3 color = star_color.rgb * rays + vec3(1.0) * ring;
 	vec3 hsv = vec3(TIME/ pulse_period/2.0 + angle/(PI * 2.0),Saturation,1);//此处的亮度设置没有意义，后面会对亮度归一化
 	vec3 color = norm_col(hsv2rgb(hsv));
-	color = color * rays + vec3(1.0) * ring;
+	color = color * rays;
+	color.x = min(color.x,1.0);
+	color.y = min(color.y,1.0);
+	color.z = min(color.z,1.0);
+	//color *= 0.5;
     COLOR = vec4(color, 1.0);
 }

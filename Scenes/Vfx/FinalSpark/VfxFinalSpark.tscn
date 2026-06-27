@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://broc7esm03vky"]
+[gd_scene load_steps=14 format=3 uid="uid://broc7esm03vky"]
 
 [ext_resource type="Script" uid="uid://dv7nxbfhc2bl4" path="res://Scenes/Vfx/FinalSpark/VfxFinalSpark.cs" id="1_5v5ju"]
 [ext_resource type="Shader" uid="uid://cudbkd68ilvyr" path="res://Materials/Shader/Beam/VfxFinalSparkBeam.gdshader" id="2_i6ppn"]
@@ -11,6 +11,7 @@ noise = SubResource("FastNoiseLite_rwbm5")
 seamless = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m3hhr"]
+resource_local_to_scene = true
 shader = ExtResource("2_i6ppn")
 shader_parameter/noise_tex = SubResource("NoiseTexture2D_b04we")
 shader_parameter/glow_factor = 1.5
@@ -32,11 +33,22 @@ width = 128
 height = 128
 noise = SubResource("FastNoiseLite_kdk1l")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_7sipw"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_yiiou"]
+noise_type = 3
+seed = 140
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kl131"]
+resource_local_to_scene = true
+noise = SubResource("FastNoiseLite_yiiou")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5v5ju"]
+resource_local_to_scene = true
 shader = ExtResource("3_cp1fi")
 shader_parameter/glow_factor = 4.5
 shader_parameter/progress = 0.0
 shader_parameter/size = 1.0
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_kl131")
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_i3lip"]
 
@@ -52,6 +64,6 @@ mesh = SubResource("QuadMesh_6t6qc")
 texture = SubResource("NoiseTexture2D_g7d1y")
 
 [node name="star" type="Sprite2D" parent="."]
-material = SubResource("ShaderMaterial_7sipw")
+material = SubResource("ShaderMaterial_5v5ju")
 scale = Vector2(1999.9996, 1999.9996)
 texture = SubResource("CanvasTexture_i3lip")

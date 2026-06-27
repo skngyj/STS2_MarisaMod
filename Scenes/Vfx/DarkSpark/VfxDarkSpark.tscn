@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bha580jbc8kah"]
+[gd_scene load_steps=14 format=3 uid="uid://bha580jbc8kah"]
 
 [ext_resource type="Script" uid="uid://mb2x71m4mvtj" path="res://Scenes/Vfx/DarkSpark/VfxDarkSpark.cs" id="1_ush8r"]
 [ext_resource type="Shader" uid="uid://cw24ihvhvk5sk" path="res://Materials/Shader/Beam/VfxDarkSparkBeam.gdshader" id="2_ush8r"]
@@ -12,13 +12,14 @@ noise = SubResource("FastNoiseLite_rwbm5")
 seamless = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m3hhr"]
+resource_local_to_scene = true
 shader = ExtResource("2_ush8r")
 shader_parameter/noise_tex = SubResource("NoiseTexture2D_b04we")
 shader_parameter/glow_factor = 1.5
 shader_parameter/glow_factor2 = 1.6
 shader_parameter/rainbow_ratio = 1.0
 shader_parameter/beam_color = Color(0.13, 0.4, 0.7, 1)
-shader_parameter/progress = 1.395
+shader_parameter/progress = 1.0
 shader_parameter/size = 1.0
 
 [sub_resource type="QuadMesh" id="QuadMesh_6t6qc"]
@@ -33,11 +34,20 @@ width = 128
 height = 128
 noise = SubResource("FastNoiseLite_kdk1l")
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ush8r"]
+noise_type = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4at4j"]
+resource_local_to_scene = true
+noise = SubResource("FastNoiseLite_ush8r")
+seamless = true
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7sipw"]
 shader = ExtResource("3_4at4j")
 shader_parameter/glow_factor = 4.5
 shader_parameter/progress = 0.0
 shader_parameter/size = 1.0
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_4at4j")
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_i3lip"]
 

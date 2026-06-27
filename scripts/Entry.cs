@@ -9,15 +9,18 @@ using marisamod.Scripts.Characters;
 using marisamod.Scripts.PatchesNModels;
 using marisamod.Scripts.Powers;
 using marisamod.Scripts.Relics;
+using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
@@ -26,6 +29,8 @@ using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Multiplayer.Game;
+using MegaCrit.Sts2.Core.Multiplayer.Game.PeerInput;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.Core.Nodes.Combat;
@@ -59,8 +64,93 @@ public class Entry
         //const string modPath = "res://marisamod/images/atlases/ui_atlas.sprites/card/energy_test.tres";
         //Log.Info($"{LogPrefix} energy_test.tres 存在性: res://images/... = {ResourceLoader.Exists(gamePath)}, res://marisamod/images/... = {ResourceLoader.Exists(modPath)}");
     }
-    
 
+    #region AmplifiedCard relate
+    /// <summary>
+    /// patch卡牌费用计算，应该和x费一样的表现。
+    /// 卡牌的增幅状态会在计算费用时一并设定，并在after play中重置为false
+    /// 卡牌通过AutoPlay打出时不会经过费用计算，默认不触发增幅。
+    /// </summary>
+    [HarmonyPatch(typeof(CardEnergyCost), "GetAmountToSpend")]
+    public static class CardEnergyCost_GetAmountToSpend_Patch
+    {
+        private static void Postfix(CardEnergyCost __instance,CardModel ____card,ref int __result)
+        {
+            if (____card is not AbstractAmplifiedCard AmpCard) return;
+            AmpCard.CalculateAmplifiedCost(ref __result);
+        }
+    }
+    
+    [HarmonyPatch(typeof(NCard), "UpdateEnergyCostVisuals")]
+    public static class NPlayerHand_UpdateEnergyCostVisuals_Patch
+    {
+        static void Postfix(NCard __instance,PileType pileType,MegaLabel ____energyLabel)
+        {
+            if (pileType != PileType.Hand) return;
+            if (__instance.Model is AbstractAmplifiedCard ampCard && (RunManager.Instance.HoveredModelTracker.GetHoveredModel(ampCard.Owner.NetId) == ampCard))
+            {
+                int cost = ampCard.EnergyCost.GetWithModifiers(CostModifiers.All);
+                int kickerCost = ampCard.KickerCost;
+                bool paidAmpCost = true;
+                if (ampCard.Owner.Creature.HasPower<OneTimeOffPower>() || 
+                    ampCard.Owner.Creature.HasPower<MillisecondPulsarsPower>() ||
+                    ampCard.Owner.Creature.HasPower<PulseMagicPower>() ||
+                    ampCard.Owner.PlayerCombatState.Energy <
+                    cost + ampCard.KickerCost
+                    ) kickerCost = 0;
+                cost += kickerCost;
+                ____energyLabel.SetTextAutoSize(cost.ToString());
+                if (kickerCost > 0)
+                {
+                    ____energyLabel.AddThemeColorOverride(ThemeConstants.Label.FontColor, StsColors.green);
+                    ____energyLabel.AddThemeColorOverride(ThemeConstants.Label.FontOutlineColor,StsColors.ninetyPercentBlack  );
+                }
+            }
+        }
+    }
+    
+    [HarmonyPatch(typeof(RunManager), "InitializeShared")]
+    public static class RunManager_InitializeShared_Patch
+    {
+        static void Postfix(RunManager __instance, INetGameService netService, PeerInputSynchronizer inputSynchronizer, bool shouldSave, DateTimeOffset? dailyTime, long startTime, long runTime, long winTime, int numReloads)
+        {
+            __instance.HoveredModelTracker.HoverChanged += OnHoverChanged;
+        }
+    }
+    private static readonly Dictionary<ulong,AbstractModel> oldHoverModels = new();
+    private static void OnHoverChanged(ulong player)
+    {
+        if (oldHoverModels.TryGetValue(player, out var oldModel) && oldModel is AbstractAmplifiedCard oldAmpCard)
+        {
+            NCard.FindOnTable(oldAmpCard)?.UpdateVisuals(PileType.Hand,CardPreviewMode.None);
+        }
+        var newHoverModel = RunManager.Instance.HoveredModelTracker.GetHoveredModel(player);
+        if (newHoverModel is AbstractAmplifiedCard newAmpCard)
+        {
+            NCard.FindOnTable(newAmpCard)?.UpdateVisuals(PileType.Hand,CardPreviewMode.None);
+        }
+        oldHoverModels[player] = newHoverModel;
+    }
+    
+    [HarmonyPatch(typeof(NHandCardHolder), "UpdateCard")]
+    public static class NHandCardHolder_UpdateCard_Patch
+    {
+        static void Postfix(NHandCardHolder __instance)
+        {
+            if (__instance.CardNode?.Model is not AbstractAmplifiedCard ampCard) return;
+            if (__instance.CardNode?.Model?.CanPlay() != true)
+            {
+                __instance.CardNode.CardHighlight.Modulate = NCardHighlight.playableColor;
+                return;
+            }
+            Color color = NCardHighlight.playableColor;
+            if (ampCard.AmplifiedInPreview) color = AbstractAmplifiedCard.AmplifiedGlowColor;
+            __instance.CardNode.CardHighlight.Modulate = color;
+        }
+    }
+    #endregion
+   
+    
     [HarmonyPatch(typeof(ProgressSaveManager), "ObtainCharUnlockEpoch")]
     public static class ProgressSaveManager_ObtainCharUnlockEpoch_Patch
     {
@@ -327,37 +417,7 @@ public class Entry
     }
 
 
-    [HarmonyPatch(typeof(NCard), nameof(NCard.UpdateVisuals))]
-    internal static class NCardUpdateVisualsPatch
-    {
-        private static bool Prefix(NCard __instance)
-        {
-            var fieldInfo = AccessTools.Field(typeof(NCard), "_model");
 
-            if (fieldInfo.GetValue(__instance) != null && fieldInfo.GetValue(__instance) is AbstractAmplifiedCard card)
-            {
-                card.ValidateAmplify();
-            }
-
-            return true;
-        }
-    }
-    
-    [HarmonyPatch(typeof(ActionExecutor), "AfterActionFinished")]
-    internal static class RefreshAmplifyPatch
-    {
-        private static bool Prefix(ActionExecutor __instance)
-        {
-
-            return true;
-        }
-        
-    }
-
-    public static void RefreshAmplifyState()
-    {
-        
-    }
 
     // [HarmonyPatch(typeof(RunManager), "UpdateRichPresence")]
     // internal static class RunManagerUpdateRichPresencePatch

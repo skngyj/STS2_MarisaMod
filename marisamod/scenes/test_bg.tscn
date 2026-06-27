@@ -14,7 +14,7 @@ point_count = 6
 [sub_resource type="CanvasTexture" id="CanvasTexture_02jiw"]
 
 [sub_resource type="Curve" id="Curve_57rjr"]
-_data = [Vector2(0, 0.49582332), 0.0, 0.0, 0, 0, Vector2(0.15015015, 0.91467774), 0.0, 0.0, 0, 0, Vector2(0.26726726, 0.26312643), 0.0, 0.0, 0, 0, Vector2(0.4054054, 0.9379474), 0.0, 0.0, 0, 0, Vector2(0.5615615, 0.3174224), 0.0, 0.0, 0, 0, Vector2(0.7567567, 0.8758949), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.49582332), 0.0, 0.0, 0, 0, Vector2(0.12820514, 0.92269576), 0.0, 0.0, 0, 0, Vector2(0.3025641, 0.5941527), 0.0, 0.0, 0, 0, Vector2(0.4054054, 0.9379474), 0.0, 0.0, 0, 0, Vector2(0.6230769, 0.64568883), 0.0, 0.0, 0, 0, Vector2(0.8948718, 0.9033697), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 7
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_6bab5"]
@@ -50,9 +50,11 @@ metadata/_edit_lock_ = true
 
 [node name="MarisaPortrait" type="Sprite2D" parent="."]
 position = Vector2(1804, 1061)
+scale = Vector2(1.05, 1.05)
 texture = ExtResource("1_mr767")
 
 [node name="Icon" type="TextureRect" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
