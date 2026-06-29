@@ -91,11 +91,10 @@ public class Entry
             {
                 int cost = ampCard.EnergyCost.GetWithModifiers(CostModifiers.All);
                 int kickerCost = ampCard.KickerCost;
-                bool paidAmpCost = true;
                 if (ampCard.Owner.Creature.HasPower<OneTimeOffPower>() || 
                     ampCard.Owner.Creature.HasPower<MillisecondPulsarsPower>() ||
                     ampCard.Owner.Creature.HasPower<PulseMagicPower>() ||
-                    ampCard.Owner.PlayerCombatState.Energy <
+                    ampCard.Owner.PlayerCombatState?.Energy <
                     cost + ampCard.KickerCost
                     ) kickerCost = 0;
                 cost += kickerCost;
@@ -117,7 +116,7 @@ public class Entry
             __instance.HoveredModelTracker.HoverChanged += OnHoverChanged;
         }
     }
-    private static readonly Dictionary<ulong,AbstractModel> oldHoverModels = new();
+    private static readonly Dictionary<ulong,AbstractModel?> oldHoverModels = new();
     private static void OnHoverChanged(ulong player)
     {
         if (oldHoverModels.TryGetValue(player, out var oldModel) && oldModel is AbstractAmplifiedCard oldAmpCard)
@@ -137,8 +136,9 @@ public class Entry
     {
         static void Postfix(NHandCardHolder __instance)
         {
-            if (__instance.CardNode?.Model is not AbstractAmplifiedCard ampCard) return;
-            if (__instance.CardNode?.Model?.CanPlay() != true)
+            if (__instance.CardNode == null) return;
+            if (__instance.CardNode.Model is not AbstractAmplifiedCard ampCard) return;
+            if ( __instance.CardNode.Model?.CanPlay() != true)
             {
                 __instance.CardNode.CardHighlight.Modulate = NCardHighlight.playableColor;
                 return;
