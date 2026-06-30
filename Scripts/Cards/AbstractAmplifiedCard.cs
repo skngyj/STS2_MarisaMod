@@ -38,16 +38,13 @@ namespace marisamod.Scripts.Cards
                     case { Type: PileType.Hand } when Owner.Creature.HasPower<OneTimeOffPower>():
                         //SetAmplifyState(false, false);
                         return false;
-                        break;
                     case { Type: PileType.Hand } when Owner.Creature.HasPower<MillisecondPulsarsPower>() ||
                                                       Owner.Creature.HasPower<PulseMagicPower>():
                         //SetAmplifyState(true, true);
                         return true;
-                        break;
                     case { Type: PileType.Hand } when Owner.PlayerCombatState.Energy < EnergyCost.GetWithModifiers(CostModifiers.All):
                         //SetAmplifyState(false, false);
                         return false;
-                        break;
                     case { Type: PileType.Hand }:
                     {
                         if (Owner.PlayerCombatState.Energy >=
@@ -62,7 +59,6 @@ namespace marisamod.Scripts.Cards
                     case { Type: PileType.Discard or PileType.Draw or PileType.Exhaust }:
                         //SetAmplifyState(false, false);
                         return false;
-                        break;
                 }
 
                 return false;

@@ -77,10 +77,7 @@ namespace marisamod.Scripts.Cards
                     // 
                     
                     float startDir;
-                    if (GodotObject.IsInstanceValid(vfx))
-                        startDir = vfx.Velocity.Angle();
-                    else
-                        startDir = ( enemyPos - player.VfxSpawnPosition).Angle();
+                    startDir = GodotObject.IsInstanceValid(vfx) ? vfx.Velocity.Angle() : ( enemyPos - player.VfxSpawnPosition).Angle();
                     Vector2 targetPos = player.VfxSpawnPosition;
                     if (LocalContext.IsMe(Owner))
                     {

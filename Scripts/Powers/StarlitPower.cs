@@ -70,6 +70,7 @@ public class StarlitPower : AbstractMarisaPower
     public void UpdateVfx()
     {
         Vfx ??= StarlitVfx.Create(this);
+        if (!GodotObject.IsInstanceValid(Vfx)) return;
         Vfx.ApplySize(Amount);
     }
 }

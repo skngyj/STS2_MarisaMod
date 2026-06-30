@@ -1,8 +1,6 @@
 using Godot;
 using marisamod.Scripts.Powers;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 
@@ -31,7 +29,7 @@ public partial class StarlitVfx : Node2D
     #region 公开属性
     public Vector2 Velocity = Vector2.Zero;
     public NCreature? NCreatureOwner;
-    public StarlitPower PowerOwner;
+    public StarlitPower? PowerOwner;
     #endregion
     #region 
     private float _startSpeed;
@@ -41,9 +39,9 @@ public partial class StarlitVfx : Node2D
     private float _ellipseRotationSpeed = 0.13f;
     private float _majorRadius;
     private float _minorRadius;
-    private bool _exploding = false;
-    private float _explodTime = 0f;
-    private bool _killAfterExplode = false;
+    private bool _exploding;
+    private float _explodeTime;
+    private bool _killAfterExplode;
     #endregion
     private void UpdateWandering(float delta)
     {
@@ -88,7 +86,7 @@ public partial class StarlitVfx : Node2D
     public void StartExplosion(bool killAfterExplode = false)
     {
         _exploding = true;
-        _explodTime = 0f;
+        _explodeTime = 0f;
         ExplodeParticle.Emitting = true;
         RingShader.SetShaderParameter("power", 1.0f);
         //ExplodeParticle.Restart();
@@ -103,10 +101,10 @@ public partial class StarlitVfx : Node2D
     {
         UpdateWandering((float)delta);
         if (!_exploding) return;
-        _explodTime += (float)delta;
+        _explodeTime += (float)delta;
         Ring.Scale *= 1.1f;
-        RingShader.SetShaderParameter("power", 1.0f - _explodTime);
-        if (!(_explodTime > 1.0f)) return;
+        RingShader.SetShaderParameter("power", 1.0f - _explodeTime);
+        if (!(_explodeTime > 1.0f)) return;
         if (_killAfterExplode)
         {
             this.QueueFreeSafely();
@@ -114,7 +112,7 @@ public partial class StarlitVfx : Node2D
         else
         {
             _exploding = false;
-            PowerOwner.UpdateVfx();
+            PowerOwner?.UpdateVfx();
             Ring.Scale = new Vector2(1, 1);
         }
     }
