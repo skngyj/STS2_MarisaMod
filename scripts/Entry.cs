@@ -11,6 +11,7 @@ using marisamod.Scripts.Powers;
 using marisamod.Scripts.Relics;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Animation;
+using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -34,6 +35,7 @@ using MegaCrit.Sts2.Core.Multiplayer.Game.PeerInput;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Screens;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves.Managers;
 using MegaCrit.Sts2.Core.TestSupport;
@@ -149,7 +151,30 @@ public class Entry
         }
     }
     #endregion
-   
+    [HarmonyPatch(typeof(CardModel), nameof(CardModel.FrameMaterial), MethodType.Getter)]
+    class FrameMaterialPatch
+    {
+        private static readonly List<CardRarity> characterCard = [CardRarity.Basic,CardRarity.Common,CardRarity.Uncommon,CardRarity.Rare];
+        static bool Prefix(CardModel __instance, ref Material __result)
+        {
+            if (__instance is AbstractMarisaCard && characterCard.Contains(__instance.Rarity) )
+            {
+                __result = null;
+                return false;
+            }
+            
+            return true;
+        }
+    }
+    [HarmonyPatch(typeof(NDeckViewScreen), "_Ready")]
+    public static class NDeckViewScreen__Ready_Patch
+    {
+        static ShaderMaterial purpleBar = (ShaderMaterial)PreloadManager.Cache.GetMaterial("res://Materials/CardBanner/deck_screen_bar.tres");
+        private static void Postfix(NDeckViewScreen __instance,Godot.Control ____bg)
+        {
+            ____bg.Material = purpleBar;
+        }
+    }
     
     [HarmonyPatch(typeof(ProgressSaveManager), "ObtainCharUnlockEpoch")]
     public static class ProgressSaveManager_ObtainCharUnlockEpoch_Patch
