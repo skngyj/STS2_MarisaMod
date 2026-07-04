@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 
 namespace marisamod.Scripts.Nodes;
 

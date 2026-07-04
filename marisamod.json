@@ -3,13 +3,14 @@
   "name": "marisamod",
   "author": "Flynn, Hell, Hohner_257, Kishin, Samsara",
   "description": "marisa mod",
-  "version": "v0.3.18",
+  "version": "0.4.1",
   "has_pck": true,
   "has_dll": true,
+  "min_game_version":"0.107.1",
   "dependencies": [
     {
       "id":"BaseLib",
-      "min_version":"v3.3.0"
+      "version":"v3.3.5"
     }
   ],
   "affects_gameplay": true

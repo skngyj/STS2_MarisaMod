@@ -1,0 +1,14 @@
+[remap]
+
+importer="spine.skel"
+type="SpineSkeletonFileResource"
+uid="uid://dcwdpiwm4r2jw"
+path="res://.godot/imported/Marisa.skel-2e7fcde51944147af0404308ebc6b23d.spskel"
+
+[deps]
+
+source_file="res://marisamod/images/Export3/Marisa.skel"
+dest_files=["res://.godot/imported/Marisa.skel-2e7fcde51944147af0404308ebc6b23d.spskel"]
+
+[params]
+

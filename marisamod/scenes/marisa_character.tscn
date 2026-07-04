@@ -1,0 +1,34 @@
+[gd_scene load_steps=3 format=3 uid="uid://84y224mf0nfe"]
+
+[ext_resource type="Script" uid="uid://d3lvlhdu7l32h" path="res://Scripts/Nodes/MehCreatureVisual.cs" id="1_nxcnd"]
+[ext_resource type="SpineSkeletonDataResource" uid="uid://cu3ev4rsolyws" path="res://marisamod/images/Export3/MarisaSkelNewTemp.tres" id="2_l5np2"]
+
+[node name="MarisaCharacter" type="Node2D"]
+script = ExtResource("1_nxcnd")
+
+[node name="Visuals" type="SpineSprite" parent="."]
+skeleton_data_res = ExtResource("2_l5np2")
+preview_skin = "Default"
+preview_animation = "-- Empty --"
+preview_frame = false
+preview_time = 0.0
+unique_name_in_owner = true
+position = Vector2(-2.0000007, 20)
+scale = Vector2(0.36, 0.36)
+
+[node name="Bounds" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = -100.0
+offset_top = -288.0
+offset_right = 80.0
+offset_bottom = 14.0
+
+[node name="IntentPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0.25, -386)
+
+[node name="CenterPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-5, -170)

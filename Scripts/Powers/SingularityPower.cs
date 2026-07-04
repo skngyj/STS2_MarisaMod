@@ -20,8 +20,8 @@ namespace marisamod.Scripts.Powers
                 if (card != null)
                 {
                     Flash();
-                    if (card is AbstractMarisaCard marisaCard)
-                        _ = marisaCard.DoFlash();
+                    // if (card is AbstractMarisaCard marisaCard)
+                    //     _ = marisaCard.DoFlash();
                     // if (card.DynamicVars.ContainsKey("CalculatedDamage"))
                     // {
                     //     card.DynamicVars.CalculationBase.UpgradeValueBy(Amount);

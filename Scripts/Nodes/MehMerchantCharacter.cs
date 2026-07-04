@@ -4,7 +4,7 @@ using MegaCrit.Sts2.Core.Runs;
 namespace marisamod.Scripts.Nodes;
 public partial class MehMerchantCharacter : NMerchantCharacter
 {
-	public override void _Ready()
-	{
-	}
+	// public override void _Ready()
+	// {
+	// }
 }

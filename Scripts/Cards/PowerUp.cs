@@ -7,10 +7,13 @@ namespace marisamod.Scripts.Cards
 {
     public class PowerUp : AbstractMarisaCard
     {
-        public PowerUp() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+        public PowerUp() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+        {
+        }
 
-        protected override IEnumerable<DynamicVar> CanonicalVars => [
-            new DynamicVar("Add",2)
+        protected override IEnumerable<DynamicVar> CanonicalVars =>
+        [
+            new DynamicVar("Add", 2)
         ];
 
         protected override void OnUpgrade()
@@ -28,9 +31,8 @@ namespace marisamod.Scripts.Cards
             return Task.CompletedTask;
         }
 
-        public static void UpgradeCardDamage(CardModel card,decimal amount)
+        public static void UpgradeCardDamage(CardModel card, decimal amount)
         {
-            
             if (card.DynamicVars.ContainsKey("CalculatedDamage"))
             {
                 card.DynamicVars.CalculationBase.UpgradeValueBy(amount);
@@ -46,6 +48,11 @@ namespace marisamod.Scripts.Cards
                 {
                     dynamicVar.Value.UpgradeValueBy(amount);
                 }
+            }
+
+            if (card is AbstractMarisaCard mCard)
+            {
+                mCard.DoFlash();
             }
             // if (card.DynamicVars.ContainsKey("DamageAmplified"))
             // {

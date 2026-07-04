@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
@@ -20,11 +21,11 @@ namespace marisamod.Scripts.Cards;
 
 public class PropBag : AbstractMarisaCard
 {
-    public PropBag() : base(0, CardType.Power, CardRarity.Uncommon, TargetType.Self)
+    public PropBag() : base(0, CardType.Power, CardRarity.Ancient, TargetType.Self)
     {
     }
 
-    public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.SingleplayerOnly;
+    //public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.SingleplayerOnly;
 
     private static readonly List<RelicModel?> PoolUncommon =
     [
@@ -68,6 +69,8 @@ public class PropBag : AbstractMarisaCard
     ];
 
     // public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        [new("relicCount", 3)];
 
     protected override void OnUpgrade()
     {
@@ -77,27 +80,42 @@ public class PropBag : AbstractMarisaCard
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         //1-9: uncommon; 0: rare
-        var odd = Owner.RunState.Rng.CombatCardSelection.NextInt(10);
-
-
         var poolUncommon = PoolUncommon.Where(r => Owner.Relics.FirstOrDefault(x => x.Id == r!.Id) == null).ToList();
         var poolRare = PoolRare.Where(r => Owner.Relics.FirstOrDefault(x => x.Id == r!.Id) == null).ToList();
-        RelicModel? pick;
-        if ((odd == 0 || poolUncommon.Count == 0) && poolRare.Count > 0)
+        List<RelicModel?> picks = new List<RelicModel?>();
+        for (var i = 0; i < DynamicVars["relicCount"].IntValue; i++)
         {
-            pick = poolRare.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault();
-        }
-        else if (poolUncommon.Count > 0)
-        {
-            pick = poolUncommon.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault();
-        }
-        else
-        {
-            Log.Info("PropBag.OnPlay: no avail relic");
-            return;
+            var odd = Owner.RunState.Rng.CombatCardSelection.NextInt(10);
+
+            RelicModel? take;
+            do
+            {
+                if ((odd == 0 || poolUncommon.Count == 0) && poolRare.Count > 0)
+                {
+                    take = poolRare.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault();
+                }
+                else if (poolUncommon.Count > 0)
+                {
+                    take = poolUncommon.TakeRandom(1, Owner.RunState.Rng.CombatCardSelection).FirstOrDefault();
+                }
+                else
+                {
+                    Log.Info("PropBag.OnPlay: no avail relic");
+                    return;
+                }
+            } while (picks.Contains(take) || take == null);
+
+            picks.Add(take);
         }
 
-        var relic = await Obtain(pick!.ToMutable(), Owner);
+
+        List<RelicModel?> relics = [];
+        foreach (var relicModel in picks)
+        {
+            var relic = await Obtain(relicModel!.ToMutable(), Owner);
+            relics.Add(relic);
+        }
+
 
         PropBagPower? pow;
         if (Owner.Creature.HasPower<PropBagPower>())
@@ -110,9 +128,11 @@ public class PropBag : AbstractMarisaCard
             pow?.ClearRelicList();
         }
 
-        pow?.AddRelicToList(relic);
-
-        Log.Info($"PropBag.OnPlay: odd: {odd},pick: {pick}, relic: {relic}, pow: {pow}");
+        foreach (var relic in relics)
+        {
+            pow?.AddRelicToList(relic!);
+            //Log.Info($"PropBag.OnPlay: odd: {odd},pick: {pick}, relic: {relic}, pow: {pow}");
+        }
     }
 
 

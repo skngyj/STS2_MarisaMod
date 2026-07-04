@@ -14,7 +14,7 @@ public class ExperimentalFamiliar : AbstractMarisaRelic
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
-        HoverTipFactory.FromCard<Spark>()
+        HoverTipFactory.FromCard<Spark>(true)
     ];
 
     public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
