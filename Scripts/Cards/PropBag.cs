@@ -87,8 +87,8 @@ public class PropBag : AbstractMarisaCard
         {
             var odd = Owner.RunState.Rng.CombatCardSelection.NextInt(10);
 
-            RelicModel? take;
-            do
+            RelicModel? take = null;
+            while ((picks.Contains(take) || take == null) && (poolUncommon.Count > 0 || poolRare.Count > 0))
             {
                 if ((odd == 0 || poolUncommon.Count == 0) && poolRare.Count > 0)
                 {
@@ -101,11 +101,13 @@ public class PropBag : AbstractMarisaCard
                 else
                 {
                     Log.Info("PropBag.OnPlay: no avail relic");
-                    return;
+                    //return;
                 }
-            } while (picks.Contains(take) || take == null);
+            }
 
             picks.Add(take);
+            poolUncommon.Remove(take);
+            poolRare.Remove(take);
         }
 
 
