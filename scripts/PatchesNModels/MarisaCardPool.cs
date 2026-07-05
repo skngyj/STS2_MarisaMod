@@ -47,4 +47,5 @@ public class MarisaCardPool : CustomCardPoolModel
         return //ResourceLoader.Load<Texture2D>(path); 
         PreloadManager.Cache.GetTexture2D(path);
     }
+    public override string CardFrameMaterialPath => "../../../Materials/CardBanner/card_frame";
 }

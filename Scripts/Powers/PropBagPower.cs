@@ -2,8 +2,11 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Rooms;
+using static MegaCrit.Sts2.Core.HoverTips.HoverTipFactory;
 
 namespace marisamod.Scripts.Powers;
 
@@ -13,6 +16,12 @@ public class PropBagPower : AbstractMarisaPower
     public override PowerStackType StackType => PowerStackType.Counter;
 
     private List<RelicModel> _relics = [];
+
+    protected override void AfterCloned()
+    {
+        _relics = [];
+    }
+        
 
     public override int DisplayAmount => _relics.Count;
 
@@ -49,4 +58,5 @@ public class PropBagPower : AbstractMarisaPower
 
         ClearRelicList();
     }
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => _relics.Select(c => (IHoverTip)new HoverTip(c.Title));
 }
