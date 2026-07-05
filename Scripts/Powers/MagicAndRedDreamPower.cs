@@ -75,7 +75,7 @@ public class MagicAndRedDreamPower : AbstractMarisaPower
         if (creator == Owner.Player && !_triggeredForTurn)
         {
             _triggeredForTurn = true;
-            await CardPileCmd.Draw(new ThrowingPlayerChoiceContext(), DynamicVars.Cards.BaseValue, Owner.Player!);
+            await CardPileCmd.Draw(new ThrowingPlayerChoiceContext(), Amount, Owner.Player!);
         }
     }
 }
