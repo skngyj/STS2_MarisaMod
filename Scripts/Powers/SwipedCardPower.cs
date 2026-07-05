@@ -19,17 +19,18 @@ public class SwipedCardPower : AbstractMarisaPower
 {
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.None;
-    private readonly Dictionary<Player,List<CardModel>>  _stolenCardsDic = new();
-    private List<CardModel>? MyStolenCards => _stolenCardsDic!.GetValueOrDefault(Owner.Player);  
+    private List<CardModel> _stolenCards =[];  
+    protected override void AfterCloned()
+    {
+        _stolenCards = [];
+    }
     public override Task AfterCombatEnd(CombatRoom room)
     {
         var player = Owner.Player;
-        if (player == null) return Task.CompletedTask;
-        if (MyStolenCards == null) return Task.CompletedTask;
-        if (MyStolenCards.Count == 0 ) return Task.CompletedTask;
+        if (player == null || _stolenCards.Count == 0) return Task.CompletedTask;
 
-        IRunState runState = CombatState.RunState;
-        foreach (var card in MyStolenCards)
+        var runState = CombatState.RunState;
+        foreach (var card in _stolenCards)
         {
             if (card.DeckVersion == null) continue;
             runState.AddCard(card.DeckVersion, player);
@@ -37,27 +38,38 @@ public class SwipedCardPower : AbstractMarisaPower
             specialCardReward.SetCustomDescriptionEncounterSource(ModelDb.Encounter<ThievingHopperWeak>().Id);
             ((CombatRoom)runState.CurrentRoom!).AddExtraReward(player, specialCardReward);
         }
-        MyStolenCards.Clear();
+        _stolenCards.Clear();
         return Task.CompletedTask;
+    }
+
+    public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature,
+        bool wasRemovalPrevented, float deathAnimLength)
+    {
+        var player = Owner.Player;
+        if (player == null || _stolenCards == null || _stolenCards.Count == 0) return;
+
+        IRunState runState = CombatState.RunState;
+        foreach (var card in _stolenCards)
+        {
+            if (card.DeckVersion == null) continue;
+            runState.AddCard(card.DeckVersion, player);
+            SpecialCardReward specialCardReward = new SpecialCardReward(card.DeckVersion, player);
+            specialCardReward.SetCustomDescriptionEncounterSource(ModelDb.Encounter<ThievingHopperWeak>().Id);
+            ((CombatRoom)runState.CurrentRoom!).AddExtraReward(player, specialCardReward);
+        }
+        _stolenCards.Clear();
     }
 
     public async Task Steal(CardModel card) 
     {
         var player = card.Owner.Creature.Player;
         if (player == null) return;
-        _stolenCardsDic.TryGetValue(player, out List<CardModel>? stolenCards);
-        if (stolenCards == null)
-        {
-            stolenCards = new List<CardModel>();
-            _stolenCardsDic.Add(player, stolenCards);
-        }
-        stolenCards.Add(card);
         if (card.DeckVersion != null)
         {
             await CardPileCmd.RemoveFromDeck(card.DeckVersion, showPreview: false);
+            _stolenCards.Add(card);
         }
     }
     
-    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-        MyStolenCards == null ? Array.Empty<IHoverTip>() : MyStolenCards.Select(c => HoverTipFactory.FromCard(c)).ToArray();
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => _stolenCards.Select(c => HoverTipFactory.FromCard(c)).ToArray();
 }
