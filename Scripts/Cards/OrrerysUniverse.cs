@@ -40,9 +40,9 @@ public class OrrerysUniverse : AbstractMarisaCard
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DynamicVar("PowerDamage", 1),
-        new DynamicVar("PowerBlock", 1),
-        new DynamicVar("Power",1)
+        // new("PowerDamage", 1),
+        // new("PowerBlock", 1),
+        new("Power",1)
     ];
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
@@ -53,7 +53,8 @@ public class OrrerysUniverse : AbstractMarisaCard
     protected override void OnUpgrade()
     {
         //DynamicVars["PowerDamage"].UpgradeValueBy(1);
-        DynamicVars["Power"].UpgradeValueBy(1);
+        //DynamicVars["Power"].UpgradeValueBy(1);
+        EnergyCost.UpgradeBy(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

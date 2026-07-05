@@ -31,7 +31,7 @@ namespace marisamod.Scripts.Cards
 
         protected override IEnumerable<IHoverTip> ExtraHoverTips =>
         [
-            HoverTipFactory.FromCard<Exhaustion>(),
+            //HoverTipFactory.FromCard<Exhaustion>(),
             HoverTipFactory.FromPower<ChargeUpPower>()
         ];
 

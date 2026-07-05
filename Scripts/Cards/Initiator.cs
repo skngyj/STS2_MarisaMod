@@ -58,8 +58,8 @@ public class Initiator : AbstractMarisaCard
                     //     card.DynamicVars.Damage.UpgradeValueBy(dmg);
                     // }
 
-                    if (card is AbstractMarisaCard marisaCard)
-                        _ = marisaCard.DoFlash();
+                    // if (card is AbstractMarisaCard marisaCard)
+                    //     _ = marisaCard.DoFlash();
 
                     PowerUp.UpgradeCardDamage(card, dmg);
                 }
